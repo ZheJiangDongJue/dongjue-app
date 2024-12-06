@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 
 Dio dio = Dio();
 
+//尝试登录或抛出异常
 Future<Map> login(String username, String password) async {
   String url = GlobalData().web_api_config.WebApiUrl;
   String dbName = GlobalData().db_config.DbName;

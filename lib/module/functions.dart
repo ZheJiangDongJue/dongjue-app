@@ -48,7 +48,7 @@ class _FunctionsPageState extends State<FunctionsPage> {
           ],
         )),
         body: Column(children: [
-          Stack(children: [
+          Stack(children: [//Stack是一个层叠布局,要说理解起来,从上到下的代码就是一条条的桌布,你会从上到下一条一条盖在桌子上,最后一张桌布会盖住所有的桌布,所以最后一张桌布的代码会写在最下面
             const TextField(
               decoration: InputDecoration(
                 hintText: '请输入搜索内容',
@@ -65,23 +65,25 @@ class _FunctionsPageState extends State<FunctionsPage> {
                 right: 0,
                 child: IconButton(
                     onPressed: () {
-                      //显示提示说这个功能还没完善
+                      //显示提示说这个功能还没完善(进页面后点一点上面那个飞机就能理解了)
                       ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('这个功能还没完善')));
                     },
                     icon: const Icon(Icons.send)))
           ]),
           Expanded(
+              //填充剩余部分
               child: SingleChildScrollView(
-            child: GridView.builder(
+            child: GridView.builder(//网格视图生成器
+              //下面3条属性是确保网格视图能正常显示(不设置得到话会显示不出来)
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(//4列,然后行列间距是10
                   crossAxisCount: 4, mainAxisSpacing: 10, crossAxisSpacing: 10),
-              itemCount: 20,
+              itemCount: 20,//生成20个
               itemBuilder: (context, index) {
-                switch (currentModule) {
+                switch (currentModule) {//分支结构根据不同的模块走不同分支
                   case Module.shengchan:
                     return Card(
                       onPressed: () {
@@ -94,7 +96,6 @@ class _FunctionsPageState extends State<FunctionsPage> {
                             Text('生产功能${index + 1}'),
                           ]),
                     );
-                    break;
                   case Module.gongyi:
                     return Card(
                       onPressed: () {
@@ -107,9 +108,9 @@ class _FunctionsPageState extends State<FunctionsPage> {
                             Text('工艺功能${index + 1}'),
                           ]),
                     );
-                    break;
                   default:
                 }
+                return null;
               },
             ),
           ))
@@ -117,14 +118,17 @@ class _FunctionsPageState extends State<FunctionsPage> {
   }
 }
 
+//模块枚举
 enum Module {
   shengchan(0),
   gongyi(1);
 
+  //这里我也没太理解,可以理解是一个构造函数,然后有个int类型的value属性,这个value属性是Module枚举对应的值(上面括号里的值)
   const Module(this.value);
   final int value;
 }
 
+//手搓卡片控件
 class Card extends StatefulWidget {
   const Card({
     super.key,
@@ -174,13 +178,13 @@ class _CardState extends State<Card> {
           });
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100), // 动画时长，可根据需要调整
+          duration: const Duration(milliseconds: 100), // 动画时长
           padding: widget.padding,
           decoration: BoxDecoration(
             color: _isPressed
                 ? widget.pressedBackgroundColor
                 : widget.backgroundColor,
-            borderRadius: BorderRadius.circular(8.0), // 可根据需要调整圆角
+            borderRadius: BorderRadius.circular(8.0), // 调整圆角
             boxShadow: [
               BoxShadow(
                 // color: Colors.grey.withOpacity(0.5),

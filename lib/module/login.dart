@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../globals.dart';
 import '../web_api/login_api.dart' as login_api;
 
+//登录页面以及逻辑
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -10,10 +11,11 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+//创建一个登录页面的状态类(可以理解为mvvm的viewmodel)
 class _LoginPageState extends State<LoginPage> {
+  //这两个控件将会代替输入框，用于我们获取用户输入的用户名和密码
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  late Future<dynamic> futureAlbum;
 
   @override
   void dispose() {
@@ -33,17 +35,19 @@ class _LoginPageState extends State<LoginPage> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return ConstrainedBox(
+              //限制最大宽度,防止平板等设备出现输入框太宽的问题
               constraints: const BoxConstraints(
                 maxWidth: 300,
               ),
               child: SizedBox(
+                //固定大小并根据容器计算宽度(其实我感觉可以和外层容器对调一下)
                 width: constraints.maxWidth * 0.7,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SvgPicture.asset("assets/images/dongjue.svg"),
+                    SvgPicture.asset("assets/images/dongjue.svg"), //显示svg
                     //帐号输入框,密码输入框
                     TextField(
                       controller: _usernameController,
@@ -66,25 +70,29 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () async {
                             String username = _usernameController.text;
                             String password = _passwordController.text;
-                            //判断是否为空
+                            //判断用户名是否为空
                             if (username.isEmpty) {
                               //提示
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text("请输入用户名")));
                             } else {
-                              //判断用户名和密码是否正确
-                              // futureAlbum = login_api.login(username, password);
-                              Map map = await login_api.login(username, password);
+                              //尝试登录并获取状态,可以用调试工具查看map返回值
+                              Map map =
+                                  await login_api.login(username, password);
                               if (map["IsSuccess"] == true) {
                                 Map userInfo = map["UserInfo"];
-                                GlobalData().user_info = UserInfo(id: userInfo["id"], userName: userInfo["UserName"], name: userInfo["Name"]);
+                                GlobalData().user_info = UserInfo(
+                                    id: userInfo["id"],
+                                    userName: userInfo["UserName"],
+                                    name: userInfo["Name"]);
                                 //跳转到功能页面且关闭当前页面
                                 Navigator.pushNamedAndRemoveUntil(
                                     context, '/functions', (route) => false);
-                              }
-                              else {
+                              } else {
+                                //提示登录失败相关的消息
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(map["ErrorMessage"])));
+                                    SnackBar(
+                                        content: Text(map["ErrorMessage"])));
                               }
                             }
                           },
