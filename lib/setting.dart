@@ -18,7 +18,7 @@ Future<void> loadSettings() async {
   final prefs = await SharedPreferences.getInstance();
   final notificationsEnabled = prefs.getBool('notifications') ?? true;
   final String webApiUrl =
-      prefs.getString("WebApiConfig_WebApiUrl") ?? '192.168.3.250:7790';
+      prefs.getString("WebApiConfig_WebApiUrl") ?? 'http://192.168.3.250:7790';
   final String dbName = prefs.getString("DbConfig_DbName") ?? 'PEM6';
   // // 使用加载的设置
   print('是否通知: $notificationsEnabled');

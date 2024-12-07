@@ -1,3 +1,4 @@
+import 'package:dongjue_application/module/functions/craft/process_assembly_flow_bill.dart';
 import 'package:flutter/material.dart';
 
 class FunctionsPage extends StatefulWidget {
@@ -48,7 +49,8 @@ class _FunctionsPageState extends State<FunctionsPage> {
           ],
         )),
         body: Column(children: [
-          Stack(children: [//Stack是一个层叠布局,要说理解起来,从上到下的代码就是一条条的桌布,你会从上到下一条一条盖在桌子上,最后一张桌布会盖住所有的桌布,所以最后一张桌布的代码会写在最下面
+          Stack(children: [
+            //Stack是一个层叠布局,要说理解起来,从上到下的代码就是一条条的桌布,你会从上到下一条一条盖在桌子上,最后一张桌布会盖住所有的桌布,所以最后一张桌布的代码会写在最下面
             const TextField(
               decoration: InputDecoration(
                 hintText: '请输入搜索内容',
@@ -68,52 +70,64 @@ class _FunctionsPageState extends State<FunctionsPage> {
                       //显示提示说这个功能还没完善(进页面后点一点上面那个飞机就能理解了)
                       ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('这个功能还没完善')));
+
+                      // general_document_save(
+                      //     "ProcessAssemblyFlowDocument",
+                      //     ProcessAssemblyFlowDocument(),
+                      //     <ProcessAssemblyFlowDetail>[
+                      //       ProcessAssemblyFlowDetail()
+                      //     ]);
                     },
                     icon: const Icon(Icons.send)))
           ]),
           Expanded(
-              //填充剩余部分
-              child: SingleChildScrollView(
-            child: GridView.builder(//网格视图生成器
-              //下面3条属性是确保网格视图能正常显示(不设置得到话会显示不出来)
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(//4列,然后行列间距是10
-                  crossAxisCount: 4, mainAxisSpacing: 10, crossAxisSpacing: 10),
-              itemCount: 20,//生成20个
-              itemBuilder: (context, index) {
-                switch (currentModule) {//分支结构根据不同的模块走不同分支
-                  case Module.shengchan:
-                    return Card(
-                      onPressed: () {
-                        print("点击了功能${index + 1}");
-                      },
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.ac_unit),
-                            Text('生产功能${index + 1}'),
-                          ]),
-                    );
-                  case Module.gongyi:
-                    return Card(
-                      onPressed: () {
-                        print("点击了功能${index + 1}");
-                      },
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.ac_unit),
-                            Text('工艺功能${index + 1}'),
-                          ]),
-                    );
-                  default:
+            //填充剩余部分
+            child: Builder(builder: (context) {
+              if (Modules.modules.containsKey(currentModule)) {
+                var functions = Modules.modules[currentModule]!;
+                var myItemcount = functions.length;
+                if (myItemcount == 0) {
+                  return const Center(
+                    child: Text("该模块没有功能"),
+                  );
                 }
-                return null;
-              },
-            ),
-          ))
+                return SingleChildScrollView(
+                    child: GridView.builder(
+                  //网格视图生成器
+                  //下面3条属性是确保网格视图能正常显示(不设置得到话会显示不出来)
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      //4列,然后行列间距是10
+                      crossAxisCount: 4,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10),
+                  itemCount: myItemcount,
+                  itemBuilder: (context1, index) {
+                    var item = functions[index];
+                    return Card(
+                      onPressed: () {
+                        if (item.onClick != null) {
+                          item.onClick!(context1, item);
+                        }
+                      },
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(item.icon),
+                            Text(item.name),
+                          ]),
+                    );
+                  },
+                ));
+              } else {
+                return const Center(
+                  child: Text('模块不存在'),
+                );
+              }
+            }),
+          )
         ]));
   }
 }
@@ -201,4 +215,36 @@ class _CardState extends State<Card> {
       ),
     );
   }
+}
+
+class Modules {
+  static Map<Module, List<ModuleFunction>> modules = {
+    Module.shengchan: [
+      // ModuleFunction(name: "组装流程卡",onClick: (function) {}),
+    ],
+    Module.gongyi: [
+      ModuleFunction(
+          name: "组装流程卡",
+          icon: Icons.storage,
+          onClick: (context, function) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ProcessAssemblyFlowBill()),
+            );
+          }),
+    ],
+  };
+}
+
+typedef ModuleFunctionClickCallback = void Function(
+    BuildContext context, ModuleFunction moduleFunction);
+
+class ModuleFunction {
+  ModuleFunctionClickCallback? onClick;
+
+  String name;
+  IconData icon;
+
+  ModuleFunction({required this.name, required this.icon, this.onClick});
 }

@@ -1,3 +1,4 @@
+import 'package:dongjue_application/globals/user_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../globals.dart';
@@ -26,6 +27,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (GlobalData.DEBUG_MODE) {
+      _usernameController.text = "admin";
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -55,6 +59,9 @@ class _LoginPageState extends State<LoginPage> {
                         labelText: "用户名",
                         hintText: "请输入登录名",
                       ),
+                      onSubmitted: (value) {
+                        submit(context);
+                      },
                     ),
                     TextField(
                       controller: _passwordController,
@@ -62,39 +69,16 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: const InputDecoration(
                         labelText: "密码",
                       ),
+                      onSubmitted: (value) {
+                        submit(context);
+                      },
                     ),
                     //登录按钮
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
                           onPressed: () async {
-                            String username = _usernameController.text;
-                            String password = _passwordController.text;
-                            //判断用户名是否为空
-                            if (username.isEmpty) {
-                              //提示
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("请输入用户名")));
-                            } else {
-                              //尝试登录并获取状态,可以用调试工具查看map返回值
-                              Map map =
-                                  await login_api.login(username, password);
-                              if (map["IsSuccess"] == true) {
-                                Map userInfo = map["UserInfo"];
-                                GlobalData().user_info = UserInfo(
-                                    id: userInfo["id"],
-                                    userName: userInfo["UserName"],
-                                    name: userInfo["Name"]);
-                                //跳转到功能页面且关闭当前页面
-                                Navigator.pushNamedAndRemoveUntil(
-                                    context, '/functions', (route) => false);
-                              } else {
-                                //提示登录失败相关的消息
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(map["ErrorMessage"])));
-                              }
-                            }
+                            await submit(context);
                           },
                           child: const Text("登录")),
                     )
@@ -106,5 +90,37 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  /// 提交登录请求
+  Future<void> submit(BuildContext context) async {
+    String username = _usernameController.text;
+    String password = _passwordController.text;
+    //判断用户名是否为空
+    if (username.isEmpty) {
+      //提示
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("请输入用户名")));
+    } else {
+      //尝试登录并获取状态,可以用调试工具查看map返回值
+      Map map =
+          await login_api.login(username, password);
+      if (map["IsSuccess"] == true) {
+        Map userInfo = map["UserInfo"];
+        GlobalData().user_info = UserInfo(
+            id: userInfo["id"],
+            UserName: userInfo["UserName"],
+            Name: userInfo["Name"],
+            Jobid: userInfo["Jobid"],);
+        //跳转到功能页面且关闭当前页面
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/functions', (route) => false);
+      } else {
+        //提示登录失败相关的消息
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(map["ErrorMessage"])));
+      }
+    }
   }
 }
