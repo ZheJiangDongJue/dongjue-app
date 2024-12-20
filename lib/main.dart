@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import './module/login.dart' as m_login;
-import './module/functions.dart' as m_functions;
-import './setting.dart' as m_setting;
+import 'package:dongjue_application/module/login.dart' as m_login;
+import 'package:dongjue_application/module/functions.dart' as m_functions;
+import 'package:dongjue_application/setting.dart' as m_setting;
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 //这个是主函数,所有逻辑从这里开始
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();//初始化Flutter,本来一直用web调试就一直没加,但是调试安卓的时候报错,加上了就好了
-  m_setting.loadSettings(); // 加载设置,可以进内部看下里面
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); //初始化Flutter,本来一直用web调试就一直没加,但是调试安卓的时候报错,加上了就好了
+  await m_setting.loadSettings(); // 加载设置,可以进内部看下里面
   runApp(const MyApp());
 }
 
@@ -17,6 +18,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('zh'),
+        ],
+        locale: const Locale('zh'),
         title: '东爵内部App',
         theme: ThemeData(
           // This is the theme of your application.
@@ -39,9 +48,38 @@ class MyApp extends StatelessWidget {
         ),
         // home: const MyHomePage(title: 'Flutter Demo Home Page'),
         home: const m_login.LoginPage(),
+        // home: const ControlTestPage(),
         routes: {
           '/login': (context) => const m_login.LoginPage(),
           '/functions': (context) => const m_functions.FunctionsPage(),
+          '/test': (context) => const ControlTestPage(),
         });
+  }
+}
+
+class ControlTestPage extends StatefulWidget {
+  const ControlTestPage({super.key});
+
+  @override
+  State<ControlTestPage> createState() => _ControlTestPageState();
+}
+
+class _ControlTestPageState extends State<ControlTestPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    //
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Control Test Page'),
+      ),
+      body: Container(
+      ),
+    );
   }
 }

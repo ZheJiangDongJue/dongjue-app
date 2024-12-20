@@ -1,8 +1,10 @@
 import 'package:dongjue_application/globals/user_info.dart';
+import 'package:dongjue_application/helpers/context.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../globals.dart';
-import '../web_api/login_api.dart' as login_api;
+import 'package:dongjue_application/globals.dart';
+import 'package:dongjue_application/web_api/login_api.dart' as login_api;
+// import 'package:dongjue_application/setting.dart' as m_setting;
 
 //登录页面以及逻辑
 class LoginPage extends StatefulWidget {
@@ -94,33 +96,86 @@ class _LoginPageState extends State<LoginPage> {
 
   /// 提交登录请求
   Future<void> submit(BuildContext context) async {
+    if (GlobalData.DEBUG_MODE) {
+      GlobalData().user_info = UserInfo(
+        id: 1,
+        UserName: '1',
+        Name: '1',
+        Jobid: 1,
+      );
+      // get_bill_detail("SalesOrderDocument", 27904);
+      // return;
+      // showDateTimePickerDialog(context);
+      // return;
+      // 弹出底部区域
+      // showHalfScreenModalBottomSheet(
+      //     context,
+      //     Container(
+      //       color: Colors.white, // 设置背景颜色
+      //       child: Center(
+      //         child: Column(
+      //           mainAxisAlignment: MainAxisAlignment.center,
+      //           children: <Widget>[
+      //             Text('这是底部工作表的内容'),
+      //             ElevatedButton(
+      //               onPressed: () {
+      //                 Navigator.pop(context); // 关闭底部工作表
+      //               },
+      //               child: Text('关闭'),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //     ));
+      // return;
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => AssemblyProcessReceiveBillEditorPage()),
+      // );
+      // return;
+      Navigator.pushNamedAndRemoveUntil(context, '/functions', (route) => false);
+      return;
+    }
     String username = _usernameController.text;
     String password = _passwordController.text;
     //判断用户名是否为空
     if (username.isEmpty) {
       //提示
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("请输入用户名")));
+      showSnackBar(context, "请输入用户名");
     } else {
       //尝试登录并获取状态,可以用调试工具查看map返回值
-      Map map =
-          await login_api.login(username, password);
+      Map map = await login_api.login(username, password);
       if (map["IsSuccess"] == true) {
         Map userInfo = map["UserInfo"];
         GlobalData().user_info = UserInfo(
-            id: userInfo["id"],
-            UserName: userInfo["UserName"],
-            Name: userInfo["Name"],
-            Jobid: userInfo["Jobid"],);
+          id: userInfo["id"],
+          UserName: userInfo["UserName"],
+          Name: userInfo["Name"],
+          Jobid: userInfo["Jobid"],
+        );
+        // await m_setting.saveSettings();
+
         //跳转到功能页面且关闭当前页面
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/functions', (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, '/functions', (route) => false);
       } else {
         //提示登录失败相关的消息
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(map["ErrorMessage"])));
+        showSnackBar(context, map["ErrorMessage"]);
       }
     }
   }
+}
+
+/// 显示半屏模态底部工作表
+void showHalfScreenModalBottomSheet(BuildContext context, Widget child) {
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true, // 重要：允许模态底部工作表根据内容调整大小
+    builder: (BuildContext context) {
+      return FractionallySizedBox(
+        // 使用 FractionallySizedBox 控制高度
+        heightFactor: 0.5, // 设置高度为屏幕高度的一半
+        child: child,
+      );
+    },
+  );
 }

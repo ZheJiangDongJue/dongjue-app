@@ -21,3 +21,17 @@ class DbChangedPackResult {
     this.deleteItems,
   });
 }
+
+class ApiMessagePack{
+  int Static;
+  int DetailCode;
+  String? Message;
+  String? Data;
+
+  ApiMessagePack({
+    this.Static = 0,
+    this.DetailCode = 0,
+    this.Message,
+    this.Data,
+  });
+}

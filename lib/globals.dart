@@ -12,7 +12,7 @@ class GlobalData {
 
   //上面不用管,是实现单例模式的代码,主要是下面的代码
 
-  static const bool DEBUG_MODE = true;
+  static const bool DEBUG_MODE = false;
 
   //数据库配置
   DbConfig db_config = DbConfig();

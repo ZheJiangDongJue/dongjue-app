@@ -1,3 +1,4 @@
+import 'package:dongjue_application/extensions/date_time.dart';
 import 'package:dongjue_application/orm/basic/general_entity_base.dart';
 import 'package:dongjue_application/orm/enums.dart';
 import 'package:dongjue_application/orm/interfaces/interfaces.dart';
@@ -101,19 +102,4 @@ abstract class BillBase extends GeneralEntityBase
     super.deletedTag,
   })  : documentTime = DateTime.now().dateOnly,
         status = DocumentStatus.unapproved.value;
-}
-
-// Optional: Add an extension to get the integer value if needed
-extension ModifyModeExtension on ModifyMode {
-  int get value {
-    return index;
-  }
-}
-
-// Optional: Add an extension to get the integer value if needed
-extension DateTimeExtension on DateTime {
-  //保留日期部分
-  DateTime get dateOnly {
-    return DateTime(year, month, day).toUtc();
-  }
 }
