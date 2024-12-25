@@ -1,3 +1,7 @@
+import 'package:dongjue_application/globals.dart';
+import 'package:dongjue_application/module/change_password.dart';
+import 'package:dongjue_application/module/setting.dart';
+import 'package:dongjue_application/module/userinfo.dart';
 import 'package:flutter/material.dart';
 import 'package:dongjue_application/module/login.dart' as m_login;
 import 'package:dongjue_application/module/functions.dart' as m_functions;
@@ -18,42 +22,46 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('zh'),
-        ],
-        locale: const Locale('zh'),
-        title: '东爵内部App',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // TRY THIS: Try running your application with "flutter run". You'll see
-          // the application has a purple toolbar. Then, without quitting the app,
-          // try changing the seedColor in the colorScheme below to Colors.green
-          // and then invoke "hot reload" (save your changes or press the "hot
-          // reload" button in a Flutter-supported IDE, or press "r" if you used
-          // the command line to start the app).
-          //
-          // Notice that the counter didn't reset back to zero; the application
-          // state is not lost during the reload. To reset the state, use hot
-          // restart instead.
-          //
-          // This works for code too, not just values: Most code changes can be
-          // tested with just a hot reload.
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-        home: const m_login.LoginPage(),
-        // home: const ControlTestPage(),
-        routes: {
-          '/login': (context) => const m_login.LoginPage(),
-          '/functions': (context) => const m_functions.FunctionsPage(),
-          '/test': (context) => const ControlTestPage(),
-        });
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('zh'),
+      ],
+      locale: const Locale('zh'),
+      title: '东爵内部App',
+      theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // TRY THIS: Try running your application with "flutter run". You'll see
+        // the application has a purple toolbar. Then, without quitting the app,
+        // try changing the seedColor in the colorScheme below to Colors.green
+        // and then invoke "hot reload" (save your changes or press the "hot
+        // reload" button in a Flutter-supported IDE, or press "r" if you used
+        // the command line to start the app).
+        //
+        // Notice that the counter didn't reset back to zero; the application
+        // state is not lost during the reload. To reset the state, use hot
+        // restart instead.
+        //
+        // This works for code too, not just values: Most code changes can be
+        // tested with just a hot reload.
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const m_login.LoginPage(),
+      // home: const ControlTestPage(),
+      routes: {
+        '/login': (context) => const m_login.LoginPage(),
+        '/functions': (context) => const m_functions.FunctionsPage(),
+        '/usercenter': (context) => const UserCenter(),
+        '/setting': (context) => const SettingPage(),
+        '/test': (context) => const ControlTestPage(),
+        '/changepassword': (context) => const ChangePasswordPage(),
+      },
+    );
   }
 }
 
@@ -65,7 +73,6 @@ class ControlTestPage extends StatefulWidget {
 }
 
 class _ControlTestPageState extends State<ControlTestPage> {
-
   @override
   void initState() {
     super.initState();
@@ -74,12 +81,8 @@ class _ControlTestPageState extends State<ControlTestPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Control Test Page'),
-      ),
-      body: Container(
-      ),
-    );
+    //初始化各种
+    GlobalData().db_config.DbName = "PEM6";
+    return Text("test");
   }
 }

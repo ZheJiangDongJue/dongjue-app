@@ -23,15 +23,15 @@ class DbChangedPackResult {
 }
 
 class ApiMessagePack{
-  int Static;
-  int DetailCode;
-  String? Message;
-  String? Data;
+  int status;
+  int detailCode;
+  String? message;
+  String? data;
 
   ApiMessagePack({
-    this.Static = 0,
-    this.DetailCode = 0,
-    this.Message,
-    this.Data,
+    this.status = 0,
+    this.detailCode = 0,
+    this.message,
+    this.data,
   });
 }

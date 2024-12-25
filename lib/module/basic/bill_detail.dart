@@ -7,12 +7,14 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class BillDetail extends StatefulWidget {
-  BillDetail({super.key, required this.detailColumnInfos, this.onCellTap, this.onCellDoubleTap});
+  BillDetail({super.key, required this.detailColumnInfos, this.onCellTap, this.onCellDoubleTap, required this.readOnly});
 
   Map<String, ColumnInfo> detailColumnInfos;
 
   Function(BillDetailModel billDetailModel, DataGridCellTapDetails details)? onCellTap;
   Function(BillDetailModel billDetailModel, DataGridCellDoubleTapDetails details)? onCellDoubleTap;
+
+  bool readOnly;
 
   @override
   State<BillDetail> createState() => _BillDetailState();
@@ -21,28 +23,34 @@ class BillDetail extends StatefulWidget {
 class _BillDetailState extends State<BillDetail> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<BillDetailModel>(
-      builder: (BuildContext context, value, Widget? child) {
-        return SfDataGrid(
-          source: value.detailDataSource,
-          allowEditing: true,
-          navigationMode: GridNavigationMode.cell,
-          selectionMode: SelectionMode.single,
-          editingGestureType: EditingGestureType.tap,
-          columnWidthMode: ColumnWidthMode.lastColumnFill,
-          // controller: _dataGridController,
-          columns: detailColumnHeaderBuilder(context),
-          onCellTap: (details) {
-            widget.onCellTap?.call(value, details);
-            //   // var cell = _employeeDataSource.dataGridRows[details.rowColumnIndex.rowIndex - 1].getCells()[details.rowColumnIndex.columnIndex];
-            //   // var value = cell.value;
-            //   // print(value);
+    return Stack(
+      children: [
+        Consumer<BillDetailModel>(
+          builder: (BuildContext context, value, Widget? child) {
+            return SfDataGrid(
+              source: value.detailDataSource,
+              allowEditing: !widget.readOnly,
+              navigationMode: GridNavigationMode.cell,
+              selectionMode: SelectionMode.single,
+              editingGestureType: EditingGestureType.tap,
+              columnWidthMode: ColumnWidthMode.lastColumnFill,
+              headerRowHeight: 40,
+              rowHeight: 40,
+              // controller: _dataGridController,
+              columns: detailColumnHeaderBuilder(context),
+              onCellTap: (details) {
+                widget.onCellTap?.call(value, details);
+                //   // var cell = _employeeDataSource.dataGridRows[details.rowColumnIndex.rowIndex - 1].getCells()[details.rowColumnIndex.columnIndex];
+                //   // var value = cell.value;
+                //   // print(value);
+              },
+              onCellDoubleTap: (details) {
+                widget.onCellDoubleTap?.call(value, details);
+              },
+            );
           },
-          onCellDoubleTap: (details) {
-            widget.onCellDoubleTap?.call(value, details);
-          },
-        );
-      },
+        ),
+      ],
     );
   }
 

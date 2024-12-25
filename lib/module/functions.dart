@@ -2,6 +2,7 @@ import 'package:dongjue_application/helpers/context.dart';
 import 'package:dongjue_application/module/functions/craft/process_assembly_flow_bill.dart';
 import 'package:dongjue_application/module/helper/barcode_scanner_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class FunctionsPage extends StatefulWidget {
@@ -52,114 +53,185 @@ class _FunctionsPageState extends State<FunctionsPage> {
       //     ),
       //   ],
       // )),
-      body: Row(
-        children: [
-          NavigationRail(
-            labelType: NavigationRailLabelType.all,
-            onDestinationSelected: (value) {
-              setState(() {
-                selectedIndex = value;
-                currentModule = Module.fromValue(value);
-              });
-            },
-            destinations: const [
-              NavigationRailDestination(
-                icon: Icon(Icons.factory),
-                label: Text('生产系统'),
-              ),
-              NavigationRailDestination(
-                // icon: const Icon(Icons.engineering),
-                icon: Icon(Icons.handyman),
-                label: Text('工艺系统'),
-              ),
-            ],
-            selectedIndex: selectedIndex,
-          ),
-          const VerticalDivider(thickness: 1, width: 1),
-          Expanded(
-            child: Column(
-              children: [
-                // Stack(children: [
-                //   //Stack是一个层叠布局,要说理解起来,从上到下的代码就是一条条的桌布,你会从上到下一条一条盖在桌子上,最后一张桌布会盖住所有的桌布,所以最后一张桌布的代码会写在最下面
-                //   const TextField(
-                //     decoration: InputDecoration(
-                //       hintText: '请输入搜索内容',
-                //       prefixIcon: Icon(Icons.search),
-                //     ),
-                //     // onSubmitted: (value) {
-                //     //   print(value);
-                //     //   //显示提示说这个功能还没完善
-                //     //   ScaffoldMessenger.of(context)
-                //     //       .showSnackBar(const SnackBar(content: Text('这个功能还没完善')));
-                //     // },
-                //   ),
-                //   Positioned(
-                //       right: 0,
-                //       child: IconButton(
-                //           onPressed: () {
-                //             //显示提示说这个功能还没完善(进页面后点一点上面那个飞机就能理解了)
-                //             showSnackBar(context, '这个功能还没完善');
-                //           },
-                //           icon: const Icon(Icons.send)))
-                // ]),
-                Expanded(
-                  //填充剩余部分
-                  child: Builder(
-                    builder: (context) {
-                      if (Modules.modules.containsKey(currentModule)) {
-                        var functions = Modules.modules[currentModule]!;
-                        var myItemcount = functions.length;
-                        if (myItemcount == 0) {
-                          return const Center(
-                            child: Text("该模块没有功能"),
-                          );
-                        }
-                        return SingleChildScrollView(
-                          child: GridView.builder(
-                            //网格视图生成器
-                            //下面3条属性是确保网格视图能正常显示(不设置得到话会显示不出来)
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                //4列,然后行列间距是10
-                                crossAxisCount: 10,//TODO:如果是手机的话,得要是4列
-                                mainAxisSpacing: 10,
-                                crossAxisSpacing: 10),
-                            itemCount: myItemcount,
-                            itemBuilder: (context1, index) {
-                              var item = functions[index];
-                              return Card(
-                                onPressed: () {
-                                  if (item.onClick != null) {
-                                    item.onClick!(context1, item);
-                                  }
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(item.icon),
-                                    Text(item.name),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      } else {
-                        return const Center(
-                          child: Text('模块不存在'),
-                        );
-                      }
-                    },
-                  ),
-                )
+      body: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, dynamic) {
+          if (didPop) {
+            return;
+          }
+
+          // 弹出dialog询问是否关闭
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('提示'),
+              content: const Text('确定要退出吗?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('取消'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    SystemNavigator.pop();
+                  },
+                  child: const Text('确定'),
+                ),
               ],
             ),
-          ),
-        ],
+          );
+        },
+        child: BodyWidget(context),
       ),
     );
+  }
+
+  Widget BodyWidget(BuildContext context) {
+    return Row(
+      children: [
+        Stack(
+          children: [
+            NavigationRail(
+              labelType: NavigationRailLabelType.all,
+              onDestinationSelected: (value) {
+                setState(() {
+                  selectedIndex = value;
+                  currentModule = Module.fromValue(value);
+                });
+              },
+              destinations: const [
+                NavigationRailDestination(
+                  icon: Icon(Icons.factory),
+                  label: Text('生产系统'),
+                ),
+                NavigationRailDestination(
+                  // icon: const Icon(Icons.engineering),
+                  icon: Icon(Icons.handyman),
+                  label: Text('工艺系统'),
+                ),
+              ],
+              selectedIndex: selectedIndex,
+            ),
+            Positioned.fill(
+              child: Column(
+                // mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: IconButton(
+                      icon: const Icon(Icons.person),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/usercenter');
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/setting');
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const VerticalDivider(thickness: 1, width: 1),
+        Expanded(
+          child: Column(
+            children: [
+              // Stack(children: [
+              //   //Stack是一个层叠布局,要说理解起来,从上到下的代码就是一条条的桌布,你会从上到下一条一条盖在桌子上,最后一张桌布会盖住所有的桌布,所以最后一张桌布的代码会写在最下面
+              //   const TextField(
+              //     decoration: InputDecoration(
+              //       hintText: '请输入搜索内容',
+              //       prefixIcon: Icon(Icons.search),
+              //     ),
+              //     // onSubmitted: (value) {
+              //     //   print(value);
+              //     //   //显示提示说这个功能还没完善
+              //     //   ScaffoldMessenger.of(context)
+              //     //       .showSnackBar(const SnackBar(content: Text('这个功能还没完善')));
+              //     // },
+              //   ),
+              //   Positioned(
+              //       right: 0,
+              //       child: IconButton(
+              //           onPressed: () {
+              //             //显示提示说这个功能还没完善(进页面后点一点上面那个飞机就能理解了)
+              //             showSnackBar(context, '这个功能还没完善');
+              //           },
+              //           icon: const Icon(Icons.send)))
+              // ]),
+              Expanded(
+                //填充剩余部分
+                child: Builder(
+                  builder: (context) {
+                    if (Modules.modules.containsKey(currentModule)) {
+                      var functions = Modules.modules[currentModule]!;
+                      var myItemcount = functions.length;
+                      if (myItemcount == 0) {
+                        return const Center(
+                          child: Text("该模块没有功能"),
+                        );
+                      }
+                      return SingleChildScrollView(
+                        child: GridView.builder(
+                          //网格视图生成器
+                          //下面3条属性是确保网格视图能正常显示(不设置得到话会显示不出来)
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              //4列,然后行列间距是10
+                              crossAxisCount: getCrossAxisCount(),
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10),
+                          itemCount: myItemcount,
+                          itemBuilder: (context1, index) {
+                            var item = functions[index];
+                            return Card(
+                              onPressed: () {
+                                if (item.onClick != null) {
+                                  item.onClick!(context1, item);
+                                }
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(item.icon),
+                                  Text(item.name),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    } else {
+                      return const Center(
+                        child: Text('模块不存在'),
+                      );
+                    }
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  
+  getCrossAxisCount() {
+    //通过判断屏幕宽度来决定是4列还是10列
+    if (MediaQuery.of(context).size.width < 1000) {
+      return 4;
+    }
+    return 10;
   }
 }
 
@@ -287,12 +359,12 @@ class Modules {
           icon: Icons.storage,
           onClick: (context, function) async {
             final result = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const BarcodeScannerPage()),
+              context,
+              MaterialPageRoute(builder: (context) => const BarcodeScannerPage()),
             );
-            
+
             if (result is Barcode && result.displayValue != null) {
-                showSnackBar(context, result.displayValue!);
+              showSnackBar(context, result.displayValue!);
             }
             // Barcode code = await Navigator.push(
             //   context,

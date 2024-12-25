@@ -4,7 +4,6 @@ import 'package:dongjue_application/helpers/int.dart';
 import 'package:dongjue_application/module/basic/bill_detail.dart';
 import 'package:dongjue_application/module/basic/bill_header.dart';
 import 'package:dongjue_application/module/basic/bill_page_base.dart';
-import 'package:dongjue_application/module/basic/form_page.dart';
 import 'package:dongjue_application/module/basic/page_base.dart';
 import 'package:dongjue_application/controls/item_selector_button.dart';
 import 'package:dongjue_application/module/functions/craft/assembly_process_completion_bill_editor_page.dart';
@@ -44,6 +43,21 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
   late BillModel billModel;
   late BillDetailModel billDetailModel;
   late LoadingModel loadingModel;
+
+  var y1 = 30.0;
+  var y2 = 60.0;
+
+  var x0 = 0.0;
+  var x1 = 200.0;
+  var x2 = 400.0+30;
+  var x3 = 600.0-30;
+  var x4 = 800.0-30;
+
+  var w0 = 180.0;
+  var w1 = 180.0+30;
+  var w2 = 180.0-60;
+  var w3 = 180.0;
+  var w4 = 180.0+50;
 
   @override
   void initState() {
@@ -147,10 +161,13 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
           controller: editingController..text = displayText,
           textAlign: TextAlign.left,
           decoration: const InputDecoration(
-            contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 16.0),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
+            // contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 16.0),
+            // focusedBorder: UnderlineInputBorder(
+            //   borderSide: BorderSide(color: Colors.black),
+            // ),
+            contentPadding: EdgeInsets.zero,
+            border: InputBorder.none,
+            isDense: true,
           ),
           keyboardType: keyBoardType,
           onChanged: (String value) {
@@ -169,67 +186,115 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
       );
     };
 
-    var y1 = 60.0;
-    var y2 = 120.0;
     billModel.onControlCreator = () {
       return [
         TextBoxInfo(
             title: '制令单号',
+            readOnly: true,
             controller: TextEditingController(text: billModel.data['InnerKey']),
             onChanged: (value) {
               billModel.data['InnerKey'] = value;
             },
-            x: 200),
+            width: w1,
+            x: x1),
         TextBoxInfo(
             title: '计划数',
             controller: TextEditingController(text: (billModel.data['BQty'] as double).format(qtyDecimalPlaces)),
             onChanged: (value) {
               billModel.data['BQty'] = value;
             },
-            x: 400),
+            width: w2,
+            x: x2),
         DateTimePickerInfo(
             title: '单据日期',
             onChanged: (value) {
               billModel.data['DocumentTime'] = value;
             },
-            x: 600),
+            x: x3,
+            width: w3),
         TextBoxInfo(
             title: '单据编码',
+            readOnly: true,
             controller: TextEditingController(text: billModel.data['Code']),
             onChanged: (value) {
               billModel.data['Code'] = value;
             },
-            x: 800),
-        TextBoxInfo(title: '物料名称', readOnly: true, controller: TextEditingController(text: billModel.attachData['Material']?["Name"] ?? ""), x: 0, y: y1),
-        TextBoxInfo(title: '规格型号说明', readOnly: true, controller: TextEditingController(text: billModel.attachData['Material']?["SpecTypeExplain"] ?? ""), x: 200, y: y1),
-        TextBoxInfo(title: '生产数', controller: TextEditingController(text: (billModel.data['PreCmpBQty'] as double).format(qtyDecimalPlaces)), x: 400, y: y1),
+            x: x4,
+            width: w4),
+        TextBoxInfo(
+          title: '物料名称',
+          readOnly: true,
+          controller: TextEditingController(text: billModel.attachData['Material']?["Name"] ?? ""),
+          x: x0,
+          y: y1,
+          width: w0,
+        ),
+        TextBoxInfo(
+          title: '规格型号说明',
+          readOnly: true,
+          controller: TextEditingController(text: billModel.attachData['Material']?["SpecTypeExplain"] ?? ""),
+          x: x1,
+          y: y1,
+          width: w1,
+        ),
+        TextBoxInfo(
+          title: '生产数',
+          controller: TextEditingController(text: (billModel.data['PreCmpBQty'] as double).format(qtyDecimalPlaces)),
+          x: x2,
+          y: y1,
+          width: w2,
+        ),
         DateTimePickerInfo(
             title: '客户交期',
             value: billModel.data['DeliveryTime'],
             onChanged: (item) {
               billModel.data['DeliveryTime'] = item;
             },
-            x: 600,
-            y: y1),
-        TextBoxInfo(title: '关联单据', readOnly: true, controller: TextEditingController(text: ''), x: 800, y: y1),
-        TextBoxInfo(title: '规格型号', readOnly: true, controller: TextEditingController(text: billModel.attachData['Material']?["SpecType"] ?? ""), x: 0, y: y2),
-        TextBoxInfo(title: '物料图号', readOnly: true, controller: TextEditingController(text: billModel.attachData['Material']?["TuHao"] ?? ""), x: 200, y: y2),
+            x: x3,
+            y: y1,
+            width: w3),
+        TextBoxInfo(
+          title: '关联单据',
+          readOnly: true,
+          controller: TextEditingController(text: ''),
+          x: x4,
+          y: y1,
+          width: w4,
+        ),
+        TextBoxInfo(
+          title: '规格型号',
+          readOnly: true,
+          controller: TextEditingController(text: billModel.attachData['Material']?["SpecType"] ?? ""),
+          x: x0,
+          y: y2,
+          width: w0,
+        ),
+        TextBoxInfo(
+          title: '物料图号',
+          readOnly: true,
+          controller: TextEditingController(text: billModel.attachData['Material']?["TuHao"] ?? ""),
+          x: x1,
+          y: y2,
+          width: w1,
+        ),
         TextBoxInfo(
             title: '合格数',
             controller: TextEditingController(text: (billModel.data['CmpBQty'] as double).format(qtyDecimalPlaces)),
             onChanged: (item) {
               billModel.data['CmpBQty'] = item;
             },
-            x: 400,
-            y: y2),
+            x: x2,
+            y: y2,
+            width: w2),
         TextBoxInfo(
             title: '备注',
             controller: TextEditingController(text: billModel.data['Note']),
             onChanged: (item) {
               billModel.data['Note'] = item;
             },
-            x: 800,
-            y: y2)
+            x: x4,
+            y: y2,
+            width: w4)
       ];
     };
 
@@ -304,9 +369,87 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
           );
         },
       ),
-      ColumnInfo(header: "工价", fieldName: "WorkPrice", type: double),
-      ColumnInfo(header: "计划数", fieldName: "BQty", type: double),
-      ColumnInfo(header: "计件工资", fieldName: "PieceRateWage", type: double),
+      ColumnInfo(
+        header: "工价",
+        fieldName: "WorkPrice",
+        type: double,
+        editWidgetBuilder: (dataGridRow, rowColumnIndex, column, submitCell) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              autofocus: true,
+              controller: TextEditingController(text: (double.tryParse(dataGridRow.getCells()[rowColumnIndex.columnIndex].value.toString()) ?? 0.0).format(qtyDecimalPlaces)),
+              textAlign: TextAlign.left,
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.zero,
+                border: InputBorder.none,
+                isDense: true,
+              ),
+              onChanged: (value) {
+                billDetailModel.detailDataSource.newCellValue = double.tryParse(value) ?? 0.0;
+              },
+              onSubmitted: (value) {
+                submitCell();
+              },
+            ),
+          );
+        },
+      ),
+      ColumnInfo(
+          header: "计划数",
+          fieldName: "BQty",
+          type: double,
+          editWidgetBuilder: (dataGridRow, rowColumnIndex, column, submitCell) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                autofocus: true,
+                controller: TextEditingController(text: (double.tryParse(dataGridRow.getCells()[rowColumnIndex.columnIndex].value.toString()) ?? 0.0).format(qtyDecimalPlaces)),
+                textAlign: TextAlign.left,
+                decoration: const InputDecoration(
+                  // contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 16.0),
+                  // focusedBorder: UnderlineInputBorder(
+                  //   borderSide: BorderSide(color: Colors.black),
+                  // ),
+                  contentPadding: EdgeInsets.zero,
+                  border: InputBorder.none,
+                  isDense: true,
+                ),
+                onChanged: (value) {
+                  billDetailModel.detailDataSource.newCellValue = double.tryParse(value) ?? 0.0;
+                },
+                onSubmitted: (value) {
+                  submitCell();
+                },
+              ),
+            );
+          }),
+      ColumnInfo(
+        header: "计件工资",
+        fieldName: "PieceRateWage",
+        type: double,
+        editWidgetBuilder: (dataGridRow, rowColumnIndex, column, submitCell) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              autofocus: true,
+              controller: TextEditingController(text: (double.tryParse(dataGridRow.getCells()[rowColumnIndex.columnIndex].value.toString()) ?? 0.0).format(qtyDecimalPlaces)),
+              textAlign: TextAlign.left,
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.zero,
+                border: InputBorder.none,
+                isDense: true,
+              ),
+              onChanged: (value) {
+                billDetailModel.detailDataSource.newCellValue = double.tryParse(value) ?? 0.0;
+              },
+              onSubmitted: (value) {
+                submitCell();
+              },
+            ),
+          );
+        },
+      ),
       ColumnInfo(
         header: "工序编码",
         fieldName: "TypeofWorkCode",
@@ -389,10 +532,11 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
     };
 
     //加载所需数据
-    var materialGetTask = bill_api.getDataPage("Material", 999999, 1).whenComplete(() => loadingModel.loadingMessage = "[物料]加载完毕");
-    var typeofWorkGetTask = bill_api.getDataPage("TypeofWork", 999999, 1).whenComplete(() => loadingModel.loadingMessage = "[工序]加载完毕");
-    var routingDocumentGetTask = bill_api.getDataPage("RoutingDocument", 999999, 1).whenComplete(() => loadingModel.loadingMessage = "[工艺路线]加载完毕");
-    var employeeGetTask = bill_api.getDataPage("Employee", 999999, 1).whenComplete(() => loadingModel.loadingMessage = "[职员]加载完毕");
+    var materialGetTask = bill_api.getDataPageWithFields("Material", 999999, 1, ["id", "Code", "SpecTypeExplain"]).whenComplete(() => loadingModel.loadingMessage = "[物料]加载完毕");
+    var typeofWorkGetTask =
+        bill_api.getDataPageWithFields("TypeofWork", 999999, 1, ["id", "Name", "Code", "Content", "WorkRequirements"]).whenComplete(() => loadingModel.loadingMessage = "[工序]加载完毕");
+    var routingDocumentGetTask = bill_api.getDataPageWithFields("RoutingDocument", 999999, 1, ["id", "Name"]).whenComplete(() => loadingModel.loadingMessage = "[工艺路线]加载完毕");
+    var employeeGetTask = bill_api.getDataPageWithFields("Employee", 999999, 1, ["id", "Name"]).whenComplete(() => loadingModel.loadingMessage = "[职员]加载完毕");
     Future.wait([
       materialGetTask,
       typeofWorkGetTask,
@@ -452,292 +596,300 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
         ),
         body: Stack(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
+            Consumer<BillModel>(
+              builder: (context, billModel, child) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  var id = billModel.data["id"] as int;
-                                  bill_api.getPrevBill(billModel.tableName, id).then(
-                                    (value) {
-                                      if (value == null) {
-                                        showSnackBar(context, "没有更多单据了");
-                                        return;
-                                      }
-                                      billModel.setBillData(value);
-                                    },
-                                  );
-                                },
-                                child: const Text('前单')),
-                            ElevatedButton(
-                                onPressed: () {
-                                  var id = billModel.data["id"] as int;
-                                  bill_api.getNextBill(billModel.tableName, id).then(
-                                    (value) {
-                                      if (value == null) {
-                                        showSnackBar(context, "没有更多单据了");
-                                        return;
-                                      }
-                                      billModel.setBillData(value);
-                                    },
-                                  );
-                                },
-                                child: const Text('后单')),
-                            ElevatedButton(
-                                onPressed: () {
-                                  billModel.setBillData(ProcessAssemblyFlowDocument());
-                                  // var id = billModel.billData["id"] as int;
-                                },
-                                child: const Text('新增单据')),
-                            ElevatedButton(
-                                onPressed: () async {
-                                  //判断是否是审批状态
-                                  if (DocumentStatus.fromValue(billModel.data["Status"]).value.HasFlag(DocumentStatus.approved.value)) {
-                                    showSnackBar(context, "审批状态不能删除");
-                                    return;
-                                  }
-                                  bool? b = await showConfirmationDialog(context, "删除单据", "确定要删除单据吗？");
-                                  if (b == true) {
-                                    bill_api.generalBillDelete(billModel.tableName, billModel.data["id"] as int).then((result) {
-                                      if (result['IsSuccess']) {
-                                        showSnackBar(context, "删除成功");
-                                        billModel.setBillData(ProcessAssemblyFlowDocument());
-                                      } else {
-                                        showSnackBar(context, result['ErrorMessage']);
-                                      }
-                                    });
-                                  }
-                                },
-                                child: const Text('删除单据')),
-                            ElevatedButton(
-                                onPressed: () {
-                                  saveBill(context);
-                                },
-                                child: const Text('保存')),
-                            ElevatedButton(
-                                onPressed: () {
-                                  bill_api.generalBillApproval(billModel.tableName, billModel.data["id"] as int, true).then((result) async {
-                                    if (!await saveBill(context)) {
-                                      return;
-                                    }
-                                    if (result['IsSuccess']) {
-                                      showSnackBar(context, "审批成功");
-                                      bill_api.getDataUseIds(billModel.tableName, [billModel.data["id"] as int]).then((list) {
-                                        if (list.isNotEmpty) {
-                                          setState(() {
-                                            billModel.setBillData(list[0]);
-                                          });
-                                        }
-                                      });
-                                    } else {
-                                      showSnackBar(context, result['ErrorMessage']);
-                                    }
-                                  });
-                                },
-                                child: const Text('审批')),
-                            ElevatedButton(
-                                onPressed: () {
-                                  bill_api.generalBillApproval(billModel.tableName, billModel.data["id"] as int, false).then((result) {
-                                    if (result['IsSuccess']) {
-                                      showSnackBar(context, "反审批成功");
-                                      bill_api.getDataUseIds(billModel.tableName, [billModel.data["id"] as int]).then((list) {
-                                        if (list.isNotEmpty) {
-                                          setState(() {
-                                            billModel.setBillData(list[0]);
-                                          });
-                                        }
-                                      });
-                                    } else {
-                                      showSnackBar(context, result['ErrorMessage']);
-                                    }
-                                  });
-                                },
-                                child: const Text('反审批')),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                      child: Consumer<BillModel>(
-                        builder: (context, billModel, child) {
-                          var status = DocumentStatus.fromValue(billModel.data["Status"]);
-                          return Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: widget.getDocumentStatusColor(status.value), width: 3.0),
-                              borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(16.0, 2.0, 16.0, 2.0),
-                              child: Text(
-                                status.name,
-                                style: TextStyle(
-                                  fontSize: 24.0,
-                                  color: widget.getDocumentStatusColor(status.value),
-                                  fontFamily: 'SanJiXingKaiJianTi',
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                AbsorbPointer(
-                  absorbing: !widget.canEdit(DocumentStatus.fromValue(billModel.data["Status"])),
-                  child: BillHeader(
-                    width: 1400,
-                    height: 180,
-                    createOtherControls: [
-                      ControlCreateInfo(
-                        controlInfo: ControlPositionInfo(),
-                        controlCreator: () {
-                          var material = billModel.attachData["Material"];
-                          return Flex(
-                            direction: Axis.horizontal,
-                            children: [
-                              const Text("物料编码"),
-                              Expanded(
-                                child: ItemSelectorButton(
-                                  pageTitle: "选择物料",
-                                  text: material != null ? material!["Code"] : "",
-                                  items: materials != null ? materials! : [],
-                                  itemWidgetBuilder: (item) {
-                                    return Column(
-                                      children: [
-                                        Flex(direction: Axis.horizontal, children: [
-                                          const Text("编码:"),
-                                          Text(item['Code']),
-                                        ]),
-                                        Flex(
-                                          direction: Axis.horizontal,
-                                          children: [
-                                            const Text("规格型号说明:"),
-                                            Text(item['SpecTypeExplain'] ?? ''),
-                                          ],
-                                        )
-                                      ],
-                                    );
-                                  },
-                                  onSelected: (item) async {
-                                    if (item is Map) {
-                                      billModel.data['Materialid'] = item['id'];
-                                      var list = (await bill_api.getDataUseIds("Material", [item['id']]));
-                                      billModel.setAttachData('Material', list.firstOrNull);
-                                    }
-                                  },
-                                  itemTextGetter: (item) => item?['Code'] ?? '',
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      ControlCreateInfo(
-                        controlInfo: ControlPositionInfo(
-                          x: 600,
-                          y: 120,
-                          width: 180,
-                        ),
-                        controlCreator: () {
-                          var routingDocument = billModel.attachData["RoutingDocument"];
-                          return Flex(
-                            direction: Axis.horizontal,
-                            children: [
-                              const Text("工艺路线"),
-                              Expanded(
-                                child: ItemSelectorButton(
-                                  pageTitle: "选择工艺路线",
-                                  text: routingDocument != null ? routingDocument!["Name"] : "",
-                                  items: routingDocuments != null ? routingDocuments! : [],
-                                  itemWidgetBuilder: (item) {
-                                    return Text(item["Name"]);
-                                  },
-                                  onSelected: (item) async {
-                                    if (item is Map) {
-                                      billModel.data['RoutingDocumentid'] = item['id'];
-                                      var list = (await bill_api.getDataUseIds("RoutingDocument", [item['id']]));
-                                      setState(() {
-                                        billModel.attachData['RoutingDocument'] = list.firstOrNull;
-                                      });
-                                    }
-                                  },
-                                  itemTextGetter: (item) => item?['Name'] ?? '',
-                                ),
-                              )
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: BillDetail(
-                      detailColumnInfos: detailColumnInfos!,
-                      onCellDoubleTap: (billDetailModel, details) async {
-                        var rowMap = billDetailModel.detailsData[details.rowColumnIndex.rowIndex - 1];
-                        var cell = billDetailModel.detailDataSource.dataGridRows[details.rowColumnIndex.rowIndex - 1].getCells()[details.rowColumnIndex.columnIndex];
-                        var columnInfo = detailColumnInfos![cell.columnName];
-                        if (columnInfo != null) {
-                          var value = int.tryParse(cell.value.toString());
-                          if (value is int) {
-                            if (value != ProcessStatus.notStarted.value && value != ProcessStatus.disabled.value) {
-                              Map result = {};
-                              if (columnInfo.header == '接收') {
-                                result = await bill_api.receiveProcessAssemblyFlowDocument(rowMap["id"]);
-                              } else if (columnInfo.header == '完工') {
-                                result = await bill_api.completeProcessAssemblyFlowDocument(rowMap["id"]);
-                              }
-                              if (result["IsSuccess"] == true) {
-                                if (result["Objects"] != null) {
-                                  var objects = result["Objects"] as Map;
-                                  if (objects.isNotEmpty) {
-                                    //已有单据
-                                    if (objects["OpenDocument"] != null) {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) {
-                                          if (columnInfo.header == '接收') {
-                                            var page = AssemblyProcessReceiveBillEditorPage();
-                                            page.preSetData = objects["OpenDocument"];
-                                            return page;
-                                          } else if (columnInfo.header == '完工') {
-                                            var page = AssemblyProcessCompletionBillEditorPage();
-                                            page.preSetData = objects["OpenDocument"];
-                                            return page;
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                ElevatedButton(
+                                    onPressed: () {
+                                      var id = billModel.data["id"] as int;
+                                      bill_api.getPrevBill(billModel.tableName, id).then(
+                                        (value) {
+                                          if (value == null) {
+                                            showSnackBar(context, "没有更多单据了");
+                                            return;
                                           }
-                                          return Container();
-                                        }),
+                                          billModel.setBillData(value);
+                                        },
                                       );
-                                      billModel.refresh();
-                                    } else {
-                                      if (objects["TemporaryDocument"] != null) {
-                                        if (objects["TemporaryDocument"] is Map) {
+                                    },
+                                    child: const Text('前单')),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      var id = billModel.data["id"] as int;
+                                      bill_api.getNextBill(billModel.tableName, id).then(
+                                        (value) {
+                                          if (value == null) {
+                                            showSnackBar(context, "没有更多单据了");
+                                            return;
+                                          }
+                                          billModel.setBillData(value);
+                                        },
+                                      );
+                                    },
+                                    child: const Text('后单')),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      billModel.setBillData(ProcessAssemblyFlowDocument());
+                                      // var id = billModel.billData["id"] as int;
+                                    },
+                                    child: const Text('新增单据')),
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      //判断是否是审批状态
+                                      if (DocumentStatus.fromValue(billModel.data["Status"]).value.HasFlag(DocumentStatus.approved.value)) {
+                                        showSnackBar(context, "审批状态不能删除");
+                                        return;
+                                      }
+                                      bool? b = await showConfirmationDialog(context, "删除单据", "确定要删除单据吗？");
+                                      if (b == true) {
+                                        bill_api.generalBillDelete(billModel.tableName, billModel.data["id"] as int).then((result) {
+                                          if (result['IsSuccess']) {
+                                            showSnackBar(context, "删除成功");
+                                            billModel.setBillData(ProcessAssemblyFlowDocument());
+                                          } else {
+                                            showSnackBar(context, result['ErrorMessage']);
+                                          }
+                                        });
+                                      }
+                                    },
+                                    child: const Text('删除单据')),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      saveBill(context);
+                                    },
+                                    child: const Text('保存')),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      bill_api.generalBillApproval(billModel.tableName, billModel.data["id"] as int, true).then((result) async {
+                                        if (!await saveBill(context)) {
+                                          return;
+                                        }
+                                        if (result['IsSuccess']) {
+                                          showSnackBar(context, "审批成功");
+                                          bill_api.getDataUseIds(billModel.tableName, [billModel.data["id"] as int]).then((list) {
+                                            if (list.isNotEmpty) {
+                                              setState(() {
+                                                billModel.setBillData(list[0]);
+                                              });
+                                            }
+                                          });
+                                        } else {
+                                          showSnackBar(context, result['ErrorMessage']);
+                                        }
+                                      });
+                                    },
+                                    child: const Text('审批')),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      bill_api.generalBillApproval(billModel.tableName, billModel.data["id"] as int, false).then((result) {
+                                        if (result['IsSuccess']) {
+                                          showSnackBar(context, "反审批成功");
+                                          bill_api.getDataUseIds(billModel.tableName, [billModel.data["id"] as int]).then((list) {
+                                            if (list.isNotEmpty) {
+                                              setState(() {
+                                                billModel.setBillData(list[0]);
+                                              });
+                                            }
+                                          });
+                                        } else {
+                                          showSnackBar(context, result['ErrorMessage']);
+                                        }
+                                      });
+                                    },
+                                    child: const Text('反审批')),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                          child: Consumer<BillModel>(
+                            builder: (context, billModel, child) {
+                              var status = DocumentStatus.fromValue(billModel.data["Status"]);
+                              return Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: widget.getDocumentStatusColor(status.value), width: 3.0),
+                                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(16.0, 2.0, 16.0, 2.0),
+                                  child: Text(
+                                    status.name,
+                                    style: TextStyle(
+                                      fontSize: 24.0,
+                                      color: widget.getDocumentStatusColor(status.value),
+                                      fontFamily: 'SanJiXingKaiJianTi',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    AbsorbPointer(
+                      absorbing: !widget.canEdit(DocumentStatus.fromValue(billModel.data["Status"])),
+                      child: BillHeader(
+                        width: 1400,
+                        height: 90,
+                        createOtherControls: [
+                          ControlCreateInfo(
+                            controlInfo: ControlPositionInfo(),
+                            controlCreator: () {
+                              var material = billModel.attachData["Material"];
+                              return SizedBox(
+                                width: w0,
+                                child: Flex(
+                                  direction: Axis.horizontal,
+                                  children: [
+                                    const Text("物料编码"),
+                                    Expanded(
+                                      child: ItemSelectorButton(
+                                        pageTitle: "选择物料",
+                                        text: material != null ? material!["Code"] : "",
+                                        items: materials != null ? materials! : [],
+                                        itemWidgetBuilder: (item) {
+                                          return Column(
+                                            children: [
+                                              Flex(direction: Axis.horizontal, children: [
+                                                const Text("编码:"),
+                                                Text(item['Code']),
+                                              ]),
+                                              Flex(
+                                                direction: Axis.horizontal,
+                                                children: [
+                                                  const Text("规格型号说明:"),
+                                                  Text(item['SpecTypeExplain'] ?? ''),
+                                                ],
+                                              )
+                                            ],
+                                          );
+                                        },
+                                        onSelected: (item) async {
+                                          if (item is Map) {
+                                            billModel.data['Materialid'] = item['id'];
+                                            var list = (await bill_api.getDataUseIds("Material", [item['id']]));
+                                            billModel.setAttachData('Material', list.firstOrNull);
+                                          }
+                                        },
+                                        itemTextGetter: (item) => item?['Code'] ?? '',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                          ControlCreateInfo(
+                            controlInfo: ControlPositionInfo(
+                              x: x3,
+                              y: y2,
+                              width: w3,
+                            ),
+                            controlCreator: () {
+                              var routingDocument = billModel.attachData["RoutingDocument"];
+                              return Flex(
+                                direction: Axis.horizontal,
+                                children: [
+                                  const Text("工艺路线"),
+                                  Expanded(
+                                    child: ItemSelectorButton(
+                                      pageTitle: "选择工艺路线",
+                                      text: routingDocument != null ? routingDocument!["Name"] : "",
+                                      items: routingDocuments != null ? routingDocuments! : [],
+                                      itemWidgetBuilder: (item) {
+                                        return Text(item["Name"]);
+                                      },
+                                      onSelected: (item) async {
+                                        if (item is Map) {
+                                          billModel.data['RoutingDocumentid'] = item['id'];
+                                          var list = (await bill_api.getDataUseIds("RoutingDocument", [item['id']]));
+                                          setState(() {
+                                            billModel.attachData['RoutingDocument'] = list.firstOrNull;
+                                          });
+                                        }
+                                      },
+                                      itemTextGetter: (item) => item?['Name'] ?? '',
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: BillDetail(
+                          readOnly: !widget.canEdit(DocumentStatus.fromValue(billModel.data["Status"])),
+                          detailColumnInfos: detailColumnInfos!,
+                          onCellDoubleTap: (billDetailModel, details) async {
+                            var rowMap = billDetailModel.detailsData[details.rowColumnIndex.rowIndex - 1];
+                            var cell = billDetailModel.detailDataSource.dataGridRows[details.rowColumnIndex.rowIndex - 1].getCells()[details.rowColumnIndex.columnIndex];
+                            var columnInfo = detailColumnInfos![cell.columnName];
+                            if (columnInfo != null) {
+                              var value = int.tryParse(cell.value.toString());
+                              if (value is int) {
+                                if (value != ProcessStatus.notStarted.value && value != ProcessStatus.disabled.value) {
+                                  Map result = {};
+                                  if (columnInfo.header == '接收') {
+                                    result = await bill_api.receiveProcessAssemblyFlowDocument(rowMap["id"]);
+                                  } else if (columnInfo.header == '完工') {
+                                    result = await bill_api.completeProcessAssemblyFlowDocument(rowMap["id"]);
+                                  }
+                                  if (result["IsSuccess"] == true) {
+                                    if (result["Objects"] != null) {
+                                      var objects = result["Objects"] as Map;
+                                      if (objects.isNotEmpty) {
+                                        //已有单据
+                                        if (objects["OpenDocument"] != null) {
                                           await Navigator.push(
                                             context,
                                             MaterialPageRoute(builder: (context) {
                                               if (columnInfo.header == '接收') {
                                                 var page = AssemblyProcessReceiveBillEditorPage();
-                                                page.preSetData = objects["TemporaryDocument"];
+                                                page.preSetData = objects["OpenDocument"];
                                                 return page;
                                               } else if (columnInfo.header == '完工') {
                                                 var page = AssemblyProcessCompletionBillEditorPage();
-                                                page.preSetData = objects["TemporaryDocument"];
+                                                page.preSetData = objects["OpenDocument"];
                                                 return page;
                                               }
                                               return Container();
                                             }),
                                           );
                                           billModel.refresh();
+                                        } else {
+                                          if (objects["TemporaryDocument"] != null) {
+                                            if (objects["TemporaryDocument"] is Map) {
+                                              await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) {
+                                                  if (columnInfo.header == '接收') {
+                                                    var page = AssemblyProcessReceiveBillEditorPage();
+                                                    page.preSetData = objects["TemporaryDocument"];
+                                                    return page;
+                                                  } else if (columnInfo.header == '完工') {
+                                                    var page = AssemblyProcessCompletionBillEditorPage();
+                                                    page.preSetData = objects["TemporaryDocument"];
+                                                    return page;
+                                                  }
+                                                  return Container();
+                                                }),
+                                              );
+                                              billModel.refresh();
+                                            }
+                                          }
                                         }
                                       }
                                     }
@@ -745,39 +897,36 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
                                 }
                               }
                             }
-                          }
-                        }
-                      }),
-                ),
-              ],
+                          }),
+                    ),
+                  ],
+                );
+              },
             ),
-            AbsorbPointer(
-              absorbing: !widget.canEdit(DocumentStatus.fromValue(billModel.data["Status"])),
-              child: Consumer<LoadingModel>(
-                builder: (context, value, child) {
-                  return Visibility(
-                    visible: loadingModel.isDataLoading,
-                    child: Container(
-                      color: Colors.white.withOpacity(0.5),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SpinKitCubeGrid(
-                              color: Colors.blue,
-                              size: 50.0,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(loadingModel.loadingMessage),
-                            ),
-                          ],
-                        ),
+            Consumer<LoadingModel>(
+              builder: (context, value, child) {
+                return Visibility(
+                  visible: loadingModel.isDataLoading,
+                  child: Container(
+                    color: Colors.white.withOpacity(0.5),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SpinKitCubeGrid(
+                            color: Colors.blue,
+                            size: 50.0,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(loadingModel.loadingMessage),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             )
           ],
         ),

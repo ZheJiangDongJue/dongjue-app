@@ -51,6 +51,25 @@ Future<List> getDataPage(String tableName, int pageSize, int pageNumber) async {
   return list;
 }
 
+// 通用分页读取可用信息(额外一个字段用于指定要读取的字段)
+Future<List> getDataPageWithFields(String tableName, int pageSize, int pageNumber, List<String> fields) async {
+  String url = GlobalData().web_api_config.WebApiUrl;
+  String dbName = GlobalData().db_config.DbName;
+  Response response;
+  response = await dio.get("$url/billapi/getdatapagewithfields", queryParameters: {
+    "dbName": dbName,
+    "tableName": tableName,
+    "pageSize": pageSize,
+    "pageNumber": pageNumber,
+    "fields": fields.join(","),//拼接fields
+  });
+  // print(response.data);
+  Map refInfo = response.data as Map;
+  List list = jsonDecode(refInfo["Data"]);
+  return list;
+}
+
+
 // 通用读取信息
 Future<List> getDataUseIds(String tableName, List<int> ids) async {
   String url = GlobalData().web_api_config.WebApiUrl;

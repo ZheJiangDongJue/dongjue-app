@@ -79,6 +79,9 @@ class _ItemSelectorButtonState extends State<ItemSelectorButton> {
         );
 
         widget.onSelected.call(item);
+        setState(() {
+          widget.text = widget.itemTextGetter.call(item);
+        });
       },
     );
   }

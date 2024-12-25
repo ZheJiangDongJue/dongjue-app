@@ -158,7 +158,17 @@ extension TextBoxInfoExtension on TextBoxInfo {
     return TextField(
       controller: controller,
       readOnly: readOnly,
-      decoration: const InputDecoration(),
+      decoration: const InputDecoration(
+        // contentPadding: EdgeInsets.zero, // 移除所有 padding
+        contentPadding: EdgeInsets.only(left: 4, right: 4),
+        // border: InputBorder.none, // 移除边框
+        border: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        isDense: true, // 减少 TextField 的高度
+      ),
       onChanged: (value) {
         onChanged?.call(value);
       },

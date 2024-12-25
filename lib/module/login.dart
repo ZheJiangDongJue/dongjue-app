@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:dongjue_application/globals/user_info.dart';
 import 'package:dongjue_application/helpers/context.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dongjue_application/globals.dart';
 import 'package:dongjue_application/web_api/login_api.dart' as login_api;
-// import 'package:dongjue_application/setting.dart' as m_setting;
+import 'package:dongjue_application/setting.dart' as m_setting;
 
 //登录页面以及逻辑
 class LoginPage extends StatefulWidget {
@@ -19,6 +21,17 @@ class _LoginPageState extends State<LoginPage> {
   //这两个控件将会代替输入框，用于我们获取用户输入的用户名和密码
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // 是否记住密码
+  bool _rememberPassword = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _rememberPassword = GlobalData().login_config.rememberPassword;
+    _usernameController.text = GlobalData().login_config.userName;
+    _passwordController.text = GlobalData().login_config.password;
+  }
 
   @override
   void dispose() {
@@ -74,6 +87,20 @@ class _LoginPageState extends State<LoginPage> {
                       onSubmitted: (value) {
                         submit(context);
                       },
+                    ),
+                    //记住密码
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _rememberPassword,
+                          onChanged: (value) {
+                            setState(() {
+                              _rememberPassword = value ?? false;
+                            });
+                          },
+                        ),
+                        const Text("记住密码"),
+                      ],
                     ),
                     //登录按钮
                     Padding(
@@ -143,6 +170,46 @@ class _LoginPageState extends State<LoginPage> {
       //提示
       showSnackBar(context, "请输入用户名");
     } else {
+      // 获取数据库列表
+      Map dbNames = await login_api.getDbNames(username, password);
+      print(dbNames);
+      if (dbNames["Status"] != 200) {
+        showSnackBar(context, dbNames["Message"]);
+        return;
+      }
+      // 选择数据库
+      // 数据库列表是json字符串,需要转换为list
+      List dbNamesList = jsonDecode(dbNames["Data"]);
+
+      // 弹出选择数据库的对话框
+      var result = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('选择账套'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: dbNamesList.map((item) {
+                return TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, item);
+                  },
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(item),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      );
+
+      if (result == null) {
+        return;
+      }
+      String dbName = result;
+      GlobalData().db_config.DbName = dbName;
+
       //尝试登录并获取状态,可以用调试工具查看map返回值
       Map map = await login_api.login(username, password);
       if (map["IsSuccess"] == true) {
@@ -153,7 +220,13 @@ class _LoginPageState extends State<LoginPage> {
           Name: userInfo["Name"],
           Jobid: userInfo["Jobid"],
         );
-        // await m_setting.saveSettings();
+
+        // 保存设置
+        await m_setting.saveSettings(
+          userName: username,
+          password: _rememberPassword ? password : "",
+          rememberPassword: _rememberPassword,
+        );
 
         //跳转到功能页面且关闭当前页面
         Navigator.pushNamedAndRemoveUntil(context, '/functions', (route) => false);

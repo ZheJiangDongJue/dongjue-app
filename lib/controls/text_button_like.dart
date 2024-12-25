@@ -37,16 +37,15 @@ class _TextButtonLikeState extends State<TextButtonLike> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         // decoration: BoxDecoration(
         //   border: Border.all(color: Colors.grey),
         //   borderRadius: BorderRadius.circular(4),
         //   color: _isPressed ? Colors.grey[200] : Colors.transparent, // 按下时改变背景颜色
         // ),
         decoration: BoxDecoration(
-          border: const Border(
-            bottom: BorderSide(color: Colors.grey),
-          ),
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(4),
           color: _isPressed ? Colors.transparent : Colors.transparent, // 按下时改变背景颜色
         ),
         alignment: Alignment.centerLeft,

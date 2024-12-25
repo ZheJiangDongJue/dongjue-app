@@ -40,7 +40,7 @@ class _BillHeaderState extends State<BillHeader> {
                       return Positioned(
                         left: controlPositionInfo.x,
                         top: controlPositionInfo.y,
-                        width: 180,
+                        width: controlPositionInfo.width ?? 180,
                         // height: 40,
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
