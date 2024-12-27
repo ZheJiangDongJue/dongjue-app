@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:dongjue_application/helpers/context.dart';
 import 'package:dongjue_application/module/basic/bill_header.dart';
+import 'package:dongjue_application/web_api/general_entity_api.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -23,34 +25,97 @@ class BillDetail extends StatefulWidget {
 class _BillDetailState extends State<BillDetail> {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Consumer<BillDetailModel>(
-          builder: (BuildContext context, value, Widget? child) {
-            return SfDataGrid(
-              source: value.detailDataSource,
-              allowEditing: !widget.readOnly,
-              navigationMode: GridNavigationMode.cell,
-              selectionMode: SelectionMode.single,
-              editingGestureType: EditingGestureType.tap,
-              columnWidthMode: ColumnWidthMode.lastColumnFill,
-              headerRowHeight: 40,
-              rowHeight: 40,
-              // controller: _dataGridController,
-              columns: detailColumnHeaderBuilder(context),
-              onCellTap: (details) {
-                widget.onCellTap?.call(value, details);
-                //   // var cell = _employeeDataSource.dataGridRows[details.rowColumnIndex.rowIndex - 1].getCells()[details.rowColumnIndex.columnIndex];
-                //   // var value = cell.value;
-                //   // print(value);
-              },
-              onCellDoubleTap: (details) {
-                widget.onCellDoubleTap?.call(value, details);
-              },
-            );
-          },
-        ),
-      ],
+    return Consumer<BillDetailModel>(
+      builder: (BuildContext context, value, Widget? child) {
+        return Stack(children: [
+          SfDataGrid(
+            source: value.detailDataSource,
+            allowEditing: !widget.readOnly,
+            navigationMode: GridNavigationMode.cell,
+            selectionMode: SelectionMode.single,
+            editingGestureType: EditingGestureType.tap,
+            columnWidthMode: ColumnWidthMode.lastColumnFill,
+            headerRowHeight: 40,
+            rowHeight: 40,
+            // controller: _dataGridController,
+            columns: detailColumnHeaderBuilder(context),
+            onCellTap: (details) {
+              widget.onCellTap?.call(value, details);
+              //   // var cell = _employeeDataSource.dataGridRows[details.rowColumnIndex.rowIndex - 1].getCells()[details.rowColumnIndex.columnIndex];
+              //   // var value = cell.value;
+              //   // print(value);
+            },
+            onCellDoubleTap: (details) {
+              widget.onCellDoubleTap?.call(value, details);
+            },
+            onCellLongPress: (details) {
+              // widget.onCellLongPress?.call(value, details);
+              //弹出菜单询问是否删除
+              if (!widget.readOnly) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('是否删除'),
+                    content: const Text(''),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('取消'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          var index = details.rowColumnIndex.rowIndex - 1;
+                          if (index >= 0 && index < value.detailsData.length) {
+                            if (value.detailsData[index]['id'] == null || value.detailsData[index]['id'] == 0) {
+                              value.detailDataSource.dataGridRows.removeAt(index);
+                              value.detailsData.removeAt(index);
+                              value.notifyListeners();
+                            } else {
+                              var result = await generalDeleteRange(value.tableName, [value.detailsData[index]['id']]);
+                              if (result['IsSuccess']) {
+                                value.detailDataSource.dataGridRows.removeAt(index);
+                                value.detailsData.removeAt(index);
+                                value.notifyListeners();
+                              } else {
+                                showSnackBar(context, result['ErrorMessage']);
+                              }
+                            }
+                          } else {
+                            showSnackBar(context, '操作的行不存在');
+                          }
+                          Navigator.pop(context);
+                        },
+                        child: const Text('删除'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Visibility(
+                visible: !widget.readOnly,
+                child: IconButton(
+                  onPressed: () {
+                    value.detailDataSource.dataGridRows.add(value.detailRowBuilder({}));
+                    value.detailsData.add({});
+                    value.notifyListeners();
+                  },
+                  // style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.blue)),
+                  // color: Colors.white,
+                  icon: const Icon(Icons.add),
+                ),
+              ),
+            ),
+          )
+        ]);
+      },
     );
   }
 
@@ -73,6 +138,10 @@ class _BillDetailState extends State<BillDetail> {
 }
 
 class BillDetailModel extends ChangeNotifier {
+  String tableName;
+
+  BillDetailModel({required this.tableName});
+
   List<ColumnInfo> detailColumns = [];
   List<Map> detailsData = [];
   late DetailDataSource detailDataSource;
@@ -194,11 +263,13 @@ class DetailDataSource extends DataGridSource {
     if (cellSubmit != null) {
       await cellSubmit?.call(dataGridRow, rowColumnIndex, column);
     } else {
+      //判断是否超出范围
+      if (dataRowIndex >= details.length) {
+        return;
+      }
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] = DataGridCell<String>(columnName: column.columnName, value: newCellValue.toString());
       var detail = details[dataRowIndex];
-      if (detail.containsKey(column.columnName)) {
-        detail[column.columnName] = newCellValue;
-      }
+      detail[column.columnName] = newCellValue;
     }
   }
 

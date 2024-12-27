@@ -82,7 +82,7 @@ class _AssemblyProcessReceiveBillEditorPageState extends State<AssemblyProcessRe
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
-                            ElevatedButton(
+                            widget.CreateIconButton(
                                 onPressed: () {
                                   var id = formModel.getField<int>("id") ?? 0;
                                   bill_api.getPrevBill(formModel.tableName, id).then(
@@ -95,8 +95,9 @@ class _AssemblyProcessReceiveBillEditorPageState extends State<AssemblyProcessRe
                                     },
                                   );
                                 },
-                                child: const Text('前单')),
-                            ElevatedButton(
+                                icon: const Icon(Icons.arrow_back),
+                                label: const Text('前单')),
+                            widget.CreateIconButton(
                                 onPressed: () {
                                   var id = formModel.getField<int>("id") ?? 0;
                                   bill_api.getNextBill(formModel.tableName, id).then(
@@ -109,14 +110,16 @@ class _AssemblyProcessReceiveBillEditorPageState extends State<AssemblyProcessRe
                                     },
                                   );
                                 },
-                                child: const Text('后单')),
-                            ElevatedButton(
+                                icon: const Icon(Icons.arrow_forward),
+                                label: const Text('后单')),
+                            widget.CreateIconButton(
                                 onPressed: () {
                                   formModel.setFormData({});
                                   // var id = formModel.formData["id"] as int;
                                 },
-                                child: const Text('新增单据')),
-                            ElevatedButton(
+                                icon: const Icon(Icons.add),
+                                label: const Text('新增单据')),
+                            widget.CreateIconButton(
                                 onPressed: () async {
                                   //判断是否是审批状态
                                   if (DocumentStatus.fromValue(formModel.data["Status"]).value.HasFlag(DocumentStatus.approved.value)) {
@@ -135,16 +138,18 @@ class _AssemblyProcessReceiveBillEditorPageState extends State<AssemblyProcessRe
                                     });
                                   }
                                 },
-                                child: const Text('删除单据')),
-                            ElevatedButton(
+                                icon: const Icon(Icons.delete),
+                                label: const Text('删除单据')),
+                            widget.CreateIconButton(
                                 onPressed: () async {
                                   bool b = await saveBill(context);
                                   if (b) {
                                     showSnackBar(context, "保存成功");
                                   }
                                 },
-                                child: const Text('保存')),
-                            ElevatedButton(
+                                icon: const Icon(Icons.save),
+                                label: const Text('保存')),
+                            widget.CreateIconButton(
                                 onPressed: () async {
                                   if (!await saveBill(context)) {
                                     return;
@@ -165,8 +170,9 @@ class _AssemblyProcessReceiveBillEditorPageState extends State<AssemblyProcessRe
                                     }
                                   });
                                 },
-                                child: const Text('审批')),
-                            ElevatedButton(
+                                icon: const Icon(Icons.approval),
+                                label: const Text('审批')),
+                            widget.CreateIconButton(
                                 onPressed: () {
                                   var billid = formModel.getField<int>("id") ?? 0;
                                   bill_api.generalBillApproval(formModel.tableName, billid, false).then((result) {
@@ -184,7 +190,8 @@ class _AssemblyProcessReceiveBillEditorPageState extends State<AssemblyProcessRe
                                     }
                                   });
                                 },
-                                child: const Text('反审批')),
+                                icon: const Icon(Icons.approval),
+                                label: const Text('反审批')),
                           ],
                         ),
                       ),

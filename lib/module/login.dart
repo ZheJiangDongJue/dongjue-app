@@ -172,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       // 获取数据库列表
       Map dbNames = await login_api.getDbNames(username, password);
-      print(dbNames);
+      // print(dbNames);
       if (dbNames["Status"] != 200) {
         showSnackBar(context, dbNames["Message"]);
         return;

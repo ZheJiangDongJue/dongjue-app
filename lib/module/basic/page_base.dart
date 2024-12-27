@@ -13,6 +13,48 @@ abstract class PageBase extends StatefulWidget {
   bool canEdit(DocumentStatus state) {
     return state == DocumentStatus.unapproved;
   }
+
+  /// 创建一个图标按钮
+  Widget CreateIconButton({required Icon icon, required Text label, required VoidCallback? onPressed}) {
+    //   return Padding(
+    //     padding: const EdgeInsets.fromLTRB(2.0, 0, 2.0, 0),
+    //     child: TextButton.icon(
+    //       style: TextButton.styleFrom(
+    //         shape: RoundedRectangleBorder(
+    //           borderRadius: BorderRadius.circular(4.0),
+    //           side: BorderSide(
+    //             color: Colors.grey[300]!,
+    //             width: 1.0,
+    //           ),
+    //         ),
+    //       ),
+    //       onPressed: onPressed,
+    //       icon: icon,
+    //       label: label,
+    //     ),
+    //   );
+    // }
+    return Flex(
+      direction: Axis.horizontal,
+      children: [
+        TextButton.icon(
+          style: TextButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+          ),
+          onPressed: onPressed,
+          icon: icon,
+          label: label,
+        ),
+        SizedBox(
+          width: 1, // 分割线宽度
+          height: 20, // 分割线高度
+          child: Container(color: Colors.grey[300]),
+        ),
+      ],
+    );
+  }
 }
 
 extension PageBaseExtension on PageBase {}

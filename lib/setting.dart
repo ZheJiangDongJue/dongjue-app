@@ -28,7 +28,8 @@ Future<void> saveSettings({bool? notificationsEnabled, String? webApiUrl, String
 Future<void> loadSettings() async {
   final prefs = await SharedPreferences.getInstance();
   final notificationsEnabled = prefs.getBool('notifications') ?? true;
-  final String webApiUrl = prefs.getString("WebApiConfig_WebApiUrl") ?? 'http://192.168.3.250:7790';
+  // final String webApiUrl = prefs.getString("WebApiConfig_WebApiUrl") ?? 'http://192.168.3.249:7790';
+  final String webApiUrl = 'http://192.168.3.249:7790';
   final String userName = prefs.getString("LoginConfig_UserName") ?? '';
   final String password = prefs.getString("LoginConfig_Password") ?? '';
   final bool rememberPassword = prefs.getBool("LoginConfig_RememberPassword") ?? false;

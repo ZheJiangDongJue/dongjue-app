@@ -49,15 +49,15 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
 
   var x0 = 0.0;
   var x1 = 200.0;
-  var x2 = 400.0+30;
-  var x3 = 600.0-30;
-  var x4 = 800.0-30;
+  var x2 = 400.0 + 30;
+  var x3 = 600.0 - 30;
+  var x4 = 800.0 - 30;
 
   var w0 = 180.0;
-  var w1 = 180.0+30;
-  var w2 = 180.0-60;
+  var w1 = 180.0 + 30;
+  var w2 = 180.0 - 60;
   var w3 = 180.0;
-  var w4 = 180.0+50;
+  var w4 = 180.0 + 50;
 
   @override
   void initState() {
@@ -66,7 +66,7 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
     // _dataGridController = DataGridController();
     loadingModel = LoadingModel();
     billModel = BillModel(tableName: "ProcessAssemblyFlowDocument");
-    billDetailModel = BillDetailModel();
+    billDetailModel = BillDetailModel(tableName: "ProcessAssemblyFlowDetail");
     billDetailModel.bindBillModel(billModel);
     setState(() {
       loadingModel.isDataLoading = true;
@@ -608,21 +608,23 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      var id = billModel.data["id"] as int;
-                                      bill_api.getPrevBill(billModel.tableName, id).then(
-                                        (value) {
-                                          if (value == null) {
-                                            showSnackBar(context, "没有更多单据了");
-                                            return;
-                                          }
-                                          billModel.setBillData(value);
-                                        },
-                                      );
-                                    },
-                                    child: const Text('前单')),
-                                ElevatedButton(
+                                widget.CreateIconButton(
+                                  onPressed: () {
+                                    var id = billModel.data["id"] as int;
+                                    bill_api.getPrevBill(billModel.tableName, id).then(
+                                      (value) {
+                                        if (value == null) {
+                                          showSnackBar(context, "没有更多单据了");
+                                          return;
+                                        }
+                                        billModel.setBillData(value);
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.arrow_back),
+                                  label: const Text('前单'),
+                                ),
+                                widget.CreateIconButton(
                                     onPressed: () {
                                       var id = billModel.data["id"] as int;
                                       bill_api.getNextBill(billModel.tableName, id).then(
@@ -635,77 +637,88 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
                                         },
                                       );
                                     },
-                                    child: const Text('后单')),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      billModel.setBillData(ProcessAssemblyFlowDocument());
-                                      // var id = billModel.billData["id"] as int;
-                                    },
-                                    child: const Text('新增单据')),
-                                ElevatedButton(
-                                    onPressed: () async {
-                                      //判断是否是审批状态
-                                      if (DocumentStatus.fromValue(billModel.data["Status"]).value.HasFlag(DocumentStatus.approved.value)) {
-                                        showSnackBar(context, "审批状态不能删除");
-                                        return;
-                                      }
-                                      bool? b = await showConfirmationDialog(context, "删除单据", "确定要删除单据吗？");
-                                      if (b == true) {
-                                        bill_api.generalBillDelete(billModel.tableName, billModel.data["id"] as int).then((result) {
-                                          if (result['IsSuccess']) {
-                                            showSnackBar(context, "删除成功");
-                                            billModel.setBillData(ProcessAssemblyFlowDocument());
-                                          } else {
-                                            showSnackBar(context, result['ErrorMessage']);
+                                    icon: const Icon(Icons.arrow_forward),
+                                    label: const Text('后单')),
+                                widget.CreateIconButton(
+                                  onPressed: () {
+                                    billModel.setBillData(ProcessAssemblyFlowDocument());
+                                    // var id = billModel.billData["id"] as int;
+                                  },
+                                  icon: const Icon(Icons.add),
+                                  label: const Text('新增单据'),
+                                ),
+                                widget.CreateIconButton(
+                                  onPressed: () async {
+                                    //判断是否是审批状态
+                                    if (DocumentStatus.fromValue(billModel.data["Status"]).value.HasFlag(DocumentStatus.approved.value)) {
+                                      showSnackBar(context, "审批状态不能删除");
+                                      return;
+                                    }
+                                    bool? b = await showConfirmationDialog(context, "删除单据", "确定要删除单据吗？");
+                                    if (b == true) {
+                                      bill_api.generalBillDelete(billModel.tableName, billModel.data["id"] as int).then((result) {
+                                        if (result['IsSuccess']) {
+                                          showSnackBar(context, "删除成功");
+                                          billModel.setBillData(ProcessAssemblyFlowDocument());
+                                        } else {
+                                          showSnackBar(context, result['ErrorMessage']);
+                                        }
+                                      });
+                                    }
+                                  },
+                                  icon: const Icon(Icons.delete),
+                                  label: const Text('删除单据'),
+                                ),
+                                widget.CreateIconButton(
+                                  onPressed: () {
+                                    saveBill(context);
+                                  },
+                                  icon: const Icon(Icons.save),
+                                  label: const Text('保存'),
+                                ),
+                                widget.CreateIconButton(
+                                  onPressed: () async {
+                                    if (!await saveBill(context)) {
+                                      return;
+                                    }
+                                    bill_api.generalBillApproval(billModel.tableName, billModel.data["id"] as int, true).then((result) async {
+                                      if (result['IsSuccess']) {
+                                        showSnackBar(context, "审批成功");
+                                        bill_api.getDataUseIds(billModel.tableName, [billModel.data["id"] as int]).then((list) {
+                                          if (list.isNotEmpty) {
+                                            setState(() {
+                                              billModel.setBillData(list[0]);
+                                            });
                                           }
                                         });
+                                      } else {
+                                        showSnackBar(context, result['ErrorMessage']);
                                       }
-                                    },
-                                    child: const Text('删除单据')),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      saveBill(context);
-                                    },
-                                    child: const Text('保存')),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      bill_api.generalBillApproval(billModel.tableName, billModel.data["id"] as int, true).then((result) async {
-                                        if (!await saveBill(context)) {
-                                          return;
-                                        }
-                                        if (result['IsSuccess']) {
-                                          showSnackBar(context, "审批成功");
-                                          bill_api.getDataUseIds(billModel.tableName, [billModel.data["id"] as int]).then((list) {
-                                            if (list.isNotEmpty) {
-                                              setState(() {
-                                                billModel.setBillData(list[0]);
-                                              });
-                                            }
-                                          });
-                                        } else {
-                                          showSnackBar(context, result['ErrorMessage']);
-                                        }
-                                      });
-                                    },
-                                    child: const Text('审批')),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      bill_api.generalBillApproval(billModel.tableName, billModel.data["id"] as int, false).then((result) {
-                                        if (result['IsSuccess']) {
-                                          showSnackBar(context, "反审批成功");
-                                          bill_api.getDataUseIds(billModel.tableName, [billModel.data["id"] as int]).then((list) {
-                                            if (list.isNotEmpty) {
-                                              setState(() {
-                                                billModel.setBillData(list[0]);
-                                              });
-                                            }
-                                          });
-                                        } else {
-                                          showSnackBar(context, result['ErrorMessage']);
-                                        }
-                                      });
-                                    },
-                                    child: const Text('反审批')),
+                                    });
+                                  },
+                                  icon: const Icon(Icons.check_box),
+                                  label: const Text('审批'),
+                                ),
+                                widget.CreateIconButton(
+                                  onPressed: () {
+                                    bill_api.generalBillApproval(billModel.tableName, billModel.data["id"] as int, false).then((result) {
+                                      if (result['IsSuccess']) {
+                                        showSnackBar(context, "反审批成功");
+                                        bill_api.getDataUseIds(billModel.tableName, [billModel.data["id"] as int]).then((list) {
+                                          if (list.isNotEmpty) {
+                                            setState(() {
+                                              billModel.setBillData(list[0]);
+                                            });
+                                          }
+                                        });
+                                      } else {
+                                        showSnackBar(context, result['ErrorMessage']);
+                                      }
+                                    });
+                                  },
+                                  icon: const Icon(Icons.check_box_outline_blank),
+                                  label: const Text('反审批'),
+                                ),
                               ],
                             ),
                           ),
@@ -834,8 +847,13 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
                           readOnly: !widget.canEdit(DocumentStatus.fromValue(billModel.data["Status"])),
                           detailColumnInfos: detailColumnInfos!,
                           onCellDoubleTap: (billDetailModel, details) async {
-                            var rowMap = billDetailModel.detailsData[details.rowColumnIndex.rowIndex - 1];
-                            var cell = billDetailModel.detailDataSource.dataGridRows[details.rowColumnIndex.rowIndex - 1].getCells()[details.rowColumnIndex.columnIndex];
+                            var index = details.rowColumnIndex.rowIndex - 1;
+                            //判断是否超出范围
+                            if (index >= billDetailModel.detailsData.length) {
+                              return;
+                            }
+                            var rowMap = billDetailModel.detailsData[index];
+                            var cell = billDetailModel.detailDataSource.dataGridRows[index].getCells()[details.rowColumnIndex.columnIndex];
                             var columnInfo = detailColumnInfos![cell.columnName];
                             if (columnInfo != null) {
                               var value = int.tryParse(cell.value.toString());
