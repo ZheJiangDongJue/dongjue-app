@@ -25,7 +25,7 @@ class UserCenter extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              globalData.user_info.UserName,
+              globalData.user_info.Name,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),

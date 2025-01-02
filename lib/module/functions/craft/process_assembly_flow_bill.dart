@@ -308,7 +308,7 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
           return billDetailModel.detailsData.indexOf(e) + 1;
         },
       ),
-      ColumnInfo(header: "合格数", fieldName: "CmpBQty", type: double),
+      // ColumnInfo(header: "合格数", fieldName: "CmpBQty", type: double),
       ColumnInfo(
         header: "操作工",
         fieldName: "VestInName",
@@ -369,101 +369,101 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
           );
         },
       ),
-      ColumnInfo(
-        header: "工价",
-        fieldName: "WorkPrice",
-        type: double,
-        editWidgetBuilder: (dataGridRow, rowColumnIndex, column, submitCell) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              autofocus: true,
-              controller: TextEditingController(text: (double.tryParse(dataGridRow.getCells()[rowColumnIndex.columnIndex].value.toString()) ?? 0.0).format(qtyDecimalPlaces)),
-              textAlign: TextAlign.left,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.zero,
-                border: InputBorder.none,
-                isDense: true,
-              ),
-              onChanged: (value) {
-                billDetailModel.detailDataSource.newCellValue = double.tryParse(value) ?? 0.0;
-              },
-              onSubmitted: (value) {
-                submitCell();
-              },
-            ),
-          );
-        },
-      ),
-      ColumnInfo(
-          header: "计划数",
-          fieldName: "BQty",
-          type: double,
-          editWidgetBuilder: (dataGridRow, rowColumnIndex, column, submitCell) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                autofocus: true,
-                controller: TextEditingController(text: (double.tryParse(dataGridRow.getCells()[rowColumnIndex.columnIndex].value.toString()) ?? 0.0).format(qtyDecimalPlaces)),
-                textAlign: TextAlign.left,
-                decoration: const InputDecoration(
-                  // contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 16.0),
-                  // focusedBorder: UnderlineInputBorder(
-                  //   borderSide: BorderSide(color: Colors.black),
-                  // ),
-                  contentPadding: EdgeInsets.zero,
-                  border: InputBorder.none,
-                  isDense: true,
-                ),
-                onChanged: (value) {
-                  billDetailModel.detailDataSource.newCellValue = double.tryParse(value) ?? 0.0;
-                },
-                onSubmitted: (value) {
-                  submitCell();
-                },
-              ),
-            );
-          }),
-      ColumnInfo(
-        header: "计件工资",
-        fieldName: "PieceRateWage",
-        type: double,
-        editWidgetBuilder: (dataGridRow, rowColumnIndex, column, submitCell) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              autofocus: true,
-              controller: TextEditingController(text: (double.tryParse(dataGridRow.getCells()[rowColumnIndex.columnIndex].value.toString()) ?? 0.0).format(qtyDecimalPlaces)),
-              textAlign: TextAlign.left,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.zero,
-                border: InputBorder.none,
-                isDense: true,
-              ),
-              onChanged: (value) {
-                billDetailModel.detailDataSource.newCellValue = double.tryParse(value) ?? 0.0;
-              },
-              onSubmitted: (value) {
-                submitCell();
-              },
-            ),
-          );
-        },
-      ),
-      ColumnInfo(
-        header: "工序编码",
-        fieldName: "TypeofWorkCode",
-        type: String,
-        readOnly: true,
-        cellValueBuilder: (e, fieldName) {
-          var typeofWorkid = e["TypeofWorkid"];
-          var typeofWorkDict = this.typeofWorkDict ?? {};
-          if (typeofWorkDict.containsKey(typeofWorkid)) {
-            return typeofWorkDict[typeofWorkid]["Code"];
-          }
-          return '';
-        },
-      ),
+      // ColumnInfo(
+      //   header: "工价",
+      //   fieldName: "WorkPrice",
+      //   type: double,
+      //   editWidgetBuilder: (dataGridRow, rowColumnIndex, column, submitCell) {
+      //     return Padding(
+      //       padding: const EdgeInsets.all(8.0),
+      //       child: TextField(
+      //         autofocus: true,
+      //         controller: TextEditingController(text: (double.tryParse(dataGridRow.getCells()[rowColumnIndex.columnIndex].value.toString()) ?? 0.0).format(qtyDecimalPlaces)),
+      //         textAlign: TextAlign.left,
+      //         decoration: const InputDecoration(
+      //           contentPadding: EdgeInsets.zero,
+      //           border: InputBorder.none,
+      //           isDense: true,
+      //         ),
+      //         onChanged: (value) {
+      //           billDetailModel.detailDataSource.newCellValue = double.tryParse(value) ?? 0.0;
+      //         },
+      //         onSubmitted: (value) {
+      //           submitCell();
+      //         },
+      //       ),
+      //     );
+      //   },
+      // ),
+      // ColumnInfo(
+      //     header: "计划数",
+      //     fieldName: "BQty",
+      //     type: double,
+      //     editWidgetBuilder: (dataGridRow, rowColumnIndex, column, submitCell) {
+      //       return Padding(
+      //         padding: const EdgeInsets.all(8.0),
+      //         child: TextField(
+      //           autofocus: true,
+      //           controller: TextEditingController(text: (double.tryParse(dataGridRow.getCells()[rowColumnIndex.columnIndex].value.toString()) ?? 0.0).format(qtyDecimalPlaces)),
+      //           textAlign: TextAlign.left,
+      //           decoration: const InputDecoration(
+      //             // contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 16.0),
+      //             // focusedBorder: UnderlineInputBorder(
+      //             //   borderSide: BorderSide(color: Colors.black),
+      //             // ),
+      //             contentPadding: EdgeInsets.zero,
+      //             border: InputBorder.none,
+      //             isDense: true,
+      //           ),
+      //           onChanged: (value) {
+      //             billDetailModel.detailDataSource.newCellValue = double.tryParse(value) ?? 0.0;
+      //           },
+      //           onSubmitted: (value) {
+      //             submitCell();
+      //           },
+      //         ),
+      //       );
+      //     }),
+      // ColumnInfo(
+      //   header: "计件工资",
+      //   fieldName: "PieceRateWage",
+      //   type: double,
+      //   editWidgetBuilder: (dataGridRow, rowColumnIndex, column, submitCell) {
+      //     return Padding(
+      //       padding: const EdgeInsets.all(8.0),
+      //       child: TextField(
+      //         autofocus: true,
+      //         controller: TextEditingController(text: (double.tryParse(dataGridRow.getCells()[rowColumnIndex.columnIndex].value.toString()) ?? 0.0).format(qtyDecimalPlaces)),
+      //         textAlign: TextAlign.left,
+      //         decoration: const InputDecoration(
+      //           contentPadding: EdgeInsets.zero,
+      //           border: InputBorder.none,
+      //           isDense: true,
+      //         ),
+      //         onChanged: (value) {
+      //           billDetailModel.detailDataSource.newCellValue = double.tryParse(value) ?? 0.0;
+      //         },
+      //         onSubmitted: (value) {
+      //           submitCell();
+      //         },
+      //       ),
+      //     );
+      //   },
+      // ),
+      // ColumnInfo(
+      //   header: "工序编码",
+      //   fieldName: "TypeofWorkCode",
+      //   type: String,
+      //   readOnly: true,
+      //   cellValueBuilder: (e, fieldName) {
+      //     var typeofWorkid = e["TypeofWorkid"];
+      //     var typeofWorkDict = this.typeofWorkDict ?? {};
+      //     if (typeofWorkDict.containsKey(typeofWorkid)) {
+      //       return typeofWorkDict[typeofWorkid]["Code"];
+      //     }
+      //     return '';
+      //   },
+      // ),
       ColumnInfo(
         header: "工艺内容",
         fieldName: "TypeofWorkContent",
@@ -492,7 +492,7 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
           return '';
         },
       ),
-      ColumnInfo(header: "生产数", fieldName: "PreCmpBQty", type: double),
+      // ColumnInfo(header: "生产数", fieldName: "PreCmpBQty", type: double),
       ColumnInfo(
         header: "接收",
         fieldName: "JieShou",
@@ -770,6 +770,7 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
                                       child: ItemSelectorButton(
                                         pageTitle: "选择物料",
                                         text: material != null ? material!["Code"] : "",
+                                        border: Border.all(color: Colors.grey),
                                         items: materials != null ? materials! : [],
                                         itemWidgetBuilder: (item) {
                                           return Column(
@@ -819,6 +820,7 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
                                     child: ItemSelectorButton(
                                       pageTitle: "选择工艺路线",
                                       text: routingDocument != null ? routingDocument!["Name"] : "",
+                                      border: Border.all(color: Colors.grey),
                                       items: routingDocuments != null ? routingDocuments! : [],
                                       itemWidgetBuilder: (item) {
                                         return Text(item["Name"]);

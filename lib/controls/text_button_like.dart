@@ -4,10 +4,13 @@ class TextButtonLike extends StatefulWidget {
   final String text;
   final VoidCallback onPressed;
 
-  const TextButtonLike({
+  Border? border;
+
+  TextButtonLike({
     super.key,
     required this.text,
     required this.onPressed,
+    this.border,
   });
 
   @override
@@ -44,7 +47,7 @@ class _TextButtonLikeState extends State<TextButtonLike> {
         //   color: _isPressed ? Colors.grey[200] : Colors.transparent, // 按下时改变背景颜色
         // ),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
+          border: widget.border,
           borderRadius: BorderRadius.circular(4),
           color: _isPressed ? Colors.transparent : Colors.transparent, // 按下时改变背景颜色
         ),

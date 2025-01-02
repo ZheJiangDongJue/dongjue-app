@@ -14,6 +14,7 @@ class ItemSelectorButton extends StatefulWidget {
     required this.onSelected,
     required this.itemTextGetter,
     this.pageTitle = '选择',
+    this.border,
   });
 
   String text;
@@ -22,9 +23,30 @@ class ItemSelectorButton extends StatefulWidget {
   Function onSelected;
   ItemTextGetterDelegate itemTextGetter;
   final String pageTitle;
+  Border? border;
 
   @override
   State<ItemSelectorButton> createState() => _ItemSelectorButtonState();
+
+  static Widget noneBorder({
+    Key? key,
+    void Function()? onTap,
+    void Function(String)? onChanged,
+    TextEditingController? controller,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AbsorbPointer(
+        child: TextField(
+          controller: controller,
+          onChanged: onChanged,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _ItemSelectorButtonState extends State<ItemSelectorButton> {
@@ -70,6 +92,7 @@ class _ItemSelectorButtonState extends State<ItemSelectorButton> {
     }).toList();
     return TextButtonLike(
       text: widget.text,
+      border: widget.border,
       onPressed: () async {
         var item = await Navigator.push(
           context,

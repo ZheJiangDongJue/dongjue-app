@@ -24,8 +24,7 @@ Future<Map> login(String username, String password) async {
   String url = GlobalData().web_api_config.WebApiUrl;
   String dbName = GlobalData().db_config.DbName;
   Response response;
-  response =
-      await dio.get("$url/loginapi/login", queryParameters: {
+  response = await dio.get("$url/loginapi/login", queryParameters: {
     "dbName": dbName,
     "username": username,
     "password": password,
@@ -49,4 +48,3 @@ Future<bool> checkPassword(String oldPassword) async {
   bool result = response.data as bool;
   return result;
 }
-

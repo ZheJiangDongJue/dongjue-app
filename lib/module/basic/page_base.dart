@@ -55,6 +55,13 @@ abstract class PageBase extends StatefulWidget {
       ],
     );
   }
+
+  Widget CreatePadding(Widget child) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: child,
+    );
+  }
 }
 
 extension PageBaseExtension on PageBase {}

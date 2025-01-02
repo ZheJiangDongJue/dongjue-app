@@ -260,7 +260,7 @@ class _AssemblyProcessReceiveBillEditorPageState extends State<AssemblyProcessRe
                                         ),
                                       ),
                                     ),
-                                    child: ClickableTextField(
+                                    child: ClickableTextField.noneBorder(
                                       controller: controller,
                                       onTap: () async {
                                         var result = await showDateTimePickerDialog(context);
@@ -275,31 +275,32 @@ class _AssemblyProcessReceiveBillEditorPageState extends State<AssemblyProcessRe
                                   );
                                 },
                               ),
-                              TextFormField(
-                                key: const Key('Code'),
-                                readOnly: true,
-                                controller: TextEditingController(text: formModel.getField<String>('Code') ?? ''),
-                                decoration: const InputDecoration(
-                                  labelText: "单据编号",
-                                ),
-                              ),
-                              TextFormField(
-                                key: const Key('ClientName'),
-                                readOnly: true,
-                                controller: TextEditingController(text: formModel.attachData['Client']?['Name'] ?? ''),
-                                decoration: const InputDecoration(
-                                  labelText: "客户名称",
-                                ),
-                              ),
-                              TextFormField(
-                                key: const Key('MaterialName'),
-                                readOnly: true,
-                                controller: TextEditingController(text: formModel.attachData['Material']?['Code'] ?? ''),
-                                decoration: const InputDecoration(
+                              // TextFormField(
+                              //   key: const Key('Code'),
+                              //   readOnly: true,
+                              //   controller: TextEditingController(text: formModel.getField<String>('Code') ?? ''),
+                              //   decoration: const InputDecoration(
+                              //     labelText: "单据编号",
+                              //   ),
+                              // ),
+                              // TextFormField(
+                              //   key: const Key('ClientName'),
+                              //   readOnly: true,
+                              //   controller: TextEditingController(text: formModel.attachData['Client']?['Name'] ?? ''),
+                              //   decoration: const InputDecoration(
+                              //     labelText: "客户名称",
+                              //   ),
+                              // ),
+                              widget.CreatePadding(
+                                TextFormField(
+                                  key: const Key('MaterialName'),
+                                  readOnly: true,
+                                  controller: TextEditingController(text: formModel.attachData['Material']?['Code'] ?? ''),
+                                  decoration: const InputDecoration(
                                   labelText: "物料",
                                 ),
-                              ),
-                              FormField<int>(
+                              )),
+                              widget.CreatePadding(FormField<int>(
                                 builder: (FormFieldState<int> state) {
                                   return InputDecorator(
                                     decoration: InputDecoration(
@@ -330,10 +331,11 @@ class _AssemblyProcessReceiveBillEditorPageState extends State<AssemblyProcessRe
                                     ),
                                   );
                                 },
-                              ),
-                              TextFormField(
-                                controller: TextEditingController(text: formModel.getField<double>('PassBQty')?.toString() ?? ""),
-                                decoration: InputDecoration(
+                              )),
+                              widget.CreatePadding(
+                                TextFormField(
+                                  controller: TextEditingController(text: formModel.getField<double>('PassBQty')?.toString() ?? ""),
+                                  decoration: InputDecoration(
                                     label: RichText(
                                   text: const TextSpan(children: [
                                     TextSpan(text: "接收数量", style: TextStyle(color: Colors.black)),
@@ -346,63 +348,65 @@ class _AssemblyProcessReceiveBillEditorPageState extends State<AssemblyProcessRe
                                   }
                                   return null;
                                 },
-                              ),
-                              TextFormField(
-                                key: const Key('TypeofWorkName'),
-                                readOnly: true,
-                                controller: TextEditingController(text: formModel.attachData['TypeofWork']?['Name'] ?? ''),
-                                decoration: const InputDecoration(
+                              )),
+                              widget.CreatePadding(
+                                TextFormField(
+                                  key: const Key('TypeofWorkName'),
+                                  readOnly: true,
+                                  controller: TextEditingController(text: formModel.attachData['TypeofWork']?['Name'] ?? ''),
+                                  decoration: const InputDecoration(
                                   labelText: "当前工序",
                                 ),
-                              ),
-                              TextFormField(
-                                key: const Key('WarehouseName'),
-                                readOnly: true,
-                                controller: TextEditingController(text: formModel.attachData['Warehouse']?['Name'] ?? ''),
-                                decoration: const InputDecoration(
+                              )),
+                              widget.CreatePadding(
+                                TextFormField(
+                                  key: const Key('WarehouseName'),
+                                  readOnly: true,
+                                  controller: TextEditingController(text: formModel.attachData['Warehouse']?['Name'] ?? ''),
+                                  decoration: const InputDecoration(
                                   labelText: "当前车间",
                                 ),
-                              ),
-                              TextFormField(
-                                key: const Key('SpecTypeExplain'),
-                                readOnly: true,
-                                controller: TextEditingController(text: formModel.attachData['Material']?['SpecTypeExplain'] ?? ''),
-                                decoration: const InputDecoration(
-                                  labelText: "规格/颜色",
-                                ),
-                              ),
-                              TextFormField(
-                                key: const Key('GongXuMingCheng'),
-                                readOnly: true,
-                                controller: TextEditingController(text: formModel.attachData['Material']?['GongXuMingCheng'] ?? ''),
-                                decoration: const InputDecoration(
-                                  labelText: "规格/工艺",
-                                ),
-                              ),
-                              TextFormField(
-                                key: const Key('TuHao'),
-                                readOnly: true,
-                                controller: TextEditingController(text: formModel.attachData['Material']?['TuHao'] ?? ''),
-                                decoration: const InputDecoration(
-                                  labelText: "图号",
-                                ),
-                              ),
-                              TextFormField(
-                                key: const Key('JiShuBianMa'),
-                                readOnly: true,
-                                controller: TextEditingController(text: formModel.attachData['Material']?['JiShuBianMa'] ?? ''),
-                                decoration: const InputDecoration(
-                                  labelText: "技术编码",
-                                ),
-                              ),
-                              TextFormField(
-                                key: const Key('ClientMaterialCode'),
-                                readOnly: true,
-                                controller: TextEditingController(text: formModel.attachData['Material']?['ClientMaterialCode'] ?? ''),
-                                decoration: const InputDecoration(
-                                  labelText: "客户物料号",
-                                ),
-                              ),
+                              )),
+                              // TextFormField(
+                              //   key: const Key('SpecTypeExplain'),
+                              //   readOnly: true,
+                              //   controller: TextEditingController(text: formModel.attachData['Material']?['SpecTypeExplain'] ?? ''),
+                              //   decoration: const InputDecoration(
+                              //     labelText: "规格/颜色",
+                              //   ),
+                              // ),
+                              // TextFormField(
+                              //   key: const Key('GongXuMingCheng'),
+                              //   readOnly: true,
+                              //   controller: TextEditingController(text: formModel.attachData['Material']?['GongXuMingCheng'] ?? ''),
+                              //   decoration: const InputDecoration(
+                              //     labelText: "规格/工艺",
+                              //   ),
+                              // ),
+                              // TextFormField(
+                              //   key: const Key('TuHao'),
+                              //   readOnly: true,
+                              //   controller: TextEditingController(text: formModel.attachData['Material']?['TuHao'] ?? ''),
+                              //   decoration: const InputDecoration(
+                              //     labelText: "图号",
+                              //   ),
+                              // ),
+                              // TextFormField(
+                              //   key: const Key('JiShuBianMa'),
+                              //   readOnly: true,
+                              //   controller: TextEditingController(text: formModel.attachData['Material']?['JiShuBianMa'] ?? ''),
+                              //   decoration: const InputDecoration(
+                              //     labelText: "技术编码",
+                              //   ),
+                              // ),
+                              // TextFormField(
+                              //   key: const Key('ClientMaterialCode'),
+                              //   readOnly: true,
+                              //   controller: TextEditingController(text: formModel.attachData['Material']?['ClientMaterialCode'] ?? ''),
+                              //   decoration: const InputDecoration(
+                              //     labelText: "客户物料号",
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),

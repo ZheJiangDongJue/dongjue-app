@@ -40,4 +40,30 @@ class ClickableTextField extends StatelessWidget {
       ),
     );
   }
+
+  static Widget noneBorder({
+    Key? key,
+    void Function()? onTap,
+    void Function(String)? onChanged,
+    TextEditingController? controller,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AbsorbPointer(
+        // 防止键盘弹出
+        child: TextField(
+          controller: controller,
+          onChanged: onChanged,
+          decoration: const InputDecoration(
+            // border: OutlineInputBorder(), // 可选，添加边框
+            // contentPadding: EdgeInsets.zero, // 移除所有 padding
+            contentPadding: EdgeInsets.zero,
+            // border: InputBorder.none, // 移除边框
+            border: InputBorder.none,
+            isDense: true, // 减少 TextField 的高度
+          ),
+        ),
+      ),
+    );
+  }
 }
