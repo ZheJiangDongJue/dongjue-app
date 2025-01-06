@@ -1,4 +1,5 @@
 import 'package:dongjue_application/helpers/context.dart';
+import 'package:dongjue_application/module/functions/craft/batch_receive.dart';
 import 'package:dongjue_application/module/functions/craft/process_assembly_flow_bill.dart';
 import 'package:dongjue_application/module/helper/barcode_scanner_page.dart';
 import 'package:flutter/material.dart';
@@ -334,6 +335,15 @@ class Modules {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProcessAssemblyFlowBill()),
+            );
+          }),
+      ModuleFunction(
+          name: "流程卡批量接收",
+          icon: Icons.call_received,
+          onClick: (context, function) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const BatchReceivePage()),
             );
           }),
       // ModuleFunction(
