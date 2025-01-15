@@ -80,3 +80,19 @@ Future<Map> checkCanRemove(String tableName, List<int> ids) async {
   return map;
 }
 
+// 通用读取信息
+Future<List> getDataUseField(String tableName, String fieldName, List<String> values) async {
+  String url = GlobalData().web_api_config.WebApiUrl;
+  String dbName = GlobalData().db_config.DbName;
+  Response response;
+  response = await dio.get("$url/generalentityapi/getdatausefield", queryParameters: {
+    "dbName": dbName,
+    "tableName": tableName,
+    "fieldName": fieldName,
+    "values": jsonEncode(values),
+  });
+  // print(response.data);
+  Map refInfo = response.data as Map;
+  List list = jsonDecode(refInfo["Data"]);
+  return list;
+}

@@ -1,4 +1,5 @@
 import 'package:dongjue_application/helpers/context.dart';
+import 'package:dongjue_application/module/functions/craft/batch_completion.dart';
 import 'package:dongjue_application/module/functions/craft/batch_receive.dart';
 import 'package:dongjue_application/module/functions/craft/process_assembly_flow_bill.dart';
 import 'package:dongjue_application/module/helper/barcode_scanner_page.dart';
@@ -229,10 +230,10 @@ class _FunctionsPageState extends State<FunctionsPage> {
   
   getCrossAxisCount() {
     //通过判断屏幕宽度来决定是4列还是10列
-    if (MediaQuery.of(context).size.width < 1000) {
+    if (MediaQuery.of(context).size.width < 700) {
       return 4;
     }
-    return 10;
+    return 8;
   }
 }
 
@@ -344,6 +345,15 @@ class Modules {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const BatchReceivePage()),
+            );
+          }),
+      ModuleFunction(
+          name: "流程卡批量完工",
+          icon: Icons.call_made,
+          onClick: (context, function) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const BatchCompletionPage()),
             );
           }),
       // ModuleFunction(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dongjue_application/helpers/context.dart';
+import 'package:dongjue_application/module/functions/craft/batch_receive.dart';
 import 'package:dongjue_application/module/helper/barcode_scanner_page.dart';
 import 'package:dongjue_application/web_api/bill_api.dart' as bill_api;
 import 'package:dongjue_application/web_api/general_entity_api.dart' as general_entity_api;
@@ -8,14 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
-class BatchReceivePage extends StatefulWidget {
-  const BatchReceivePage({super.key});
+class BatchCompletionPage extends StatefulWidget {
+  const BatchCompletionPage({super.key});
 
   @override
-  State<BatchReceivePage> createState() => _BatchReceivePageState();
+  State<BatchCompletionPage> createState() => _BatchCompletionPageState();
 }
 
-class _BatchReceivePageState extends State<BatchReceivePage> {
+class _BatchCompletionPageState extends State<BatchCompletionPage> {
   // 添加数据列表
   List<RowItem> items = [];
 
@@ -23,7 +24,7 @@ class _BatchReceivePageState extends State<BatchReceivePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('批量接收'),
+        title: const Text('批量完工'),
       ),
       body: Stack(
         children: [
@@ -72,13 +73,13 @@ class _BatchReceivePageState extends State<BatchReceivePage> {
                             'Qty': element.qty,
                           });
                         }
-                        var result = await bill_api.batchReceiptProcessAssemblyFlowDocument(list);
+                        var result = await bill_api.batchCompletionProcessAssemblyFlowDocument(list);
                         if (result['Status'] == 200) {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
                               title: const Text('提示'),
-                              content: const Text('批量接收成功'),
+                              content: const Text('批量完工成功'),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -116,15 +117,15 @@ class _BatchReceivePageState extends State<BatchReceivePage> {
     );
   }
 
-  void AddNewRowItem() {
+  void AddNewRowItem() async {
     var model = RowItemEditorModel();
     model.setExistItems(items);
     model.newRow();
-    Navigator.push(
+    var rowItem = Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => RowItemEditorPage(
-          pageTitle: '添加待办工序接收',
+          pageTitle: '添加待办工序完工',
           model: model,
           onSubmit: (item) {
             setState(() {
@@ -185,7 +186,7 @@ class _BatchReceivePageState extends State<BatchReceivePage> {
             context,
             MaterialPageRoute(
               builder: (context) => RowItemEditorPage(
-                pageTitle: '编辑工序接收',
+                pageTitle: '编辑工序完工',
                 model: model,
                 onSubmit: (item) {
                   setState(() {
@@ -283,9 +284,8 @@ class _RowItemEditorPageState extends State<RowItemEditorPage> {
               controllerInnerKey.text = widget.model.openedItem.innerKey;
               controllerEmployeeCodeForScan.text = widget.model.openedItem.employeeCodeForScan;
               controllerQty.text = widget.model.openedItem.qty == 0 ? '0' : widget.model.openedItem.qty.toString();
-
               return Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(32.0),
                 child: Column(
                   children: [
                     TextField(
@@ -304,6 +304,7 @@ class _RowItemEditorPageState extends State<RowItemEditorPage> {
                             );
 
                             if (result is Barcode && result.displayValue != null) {
+                              // showSnackBar(context, result.displayValue!);
                               controllerInnerKey.text = result.displayValue!;
                               findAndSetDailyPlanDetail(controllerInnerKey);
                             }
@@ -330,6 +331,7 @@ class _RowItemEditorPageState extends State<RowItemEditorPage> {
                             );
 
                             if (result is Barcode && result.displayValue != null) {
+                              // showSnackBar(context, result.displayValue!);
                               controllerEmployeeCodeForScan.text = result.displayValue!;
                               findAndSetEmployee(controllerEmployeeCodeForScan);
                             }
@@ -399,23 +401,14 @@ class _RowItemEditorPageState extends State<RowItemEditorPage> {
         }
       }
     }
-    var checkResult = await bill_api.checkOrCreateProcessAssemblyFlowDocument(controller.text);
-    if (checkResult['Status'] != 200) {
-      showSnackBar(context, checkResult['Message']);
-      setState(() {
-        controller.text = widget.model.openedItem.innerKey;
-      });
-      _focusNodeForInnerKey.requestFocus();
-      return false;
-    }
     var list = await general_entity_api.getDataUseField('ProcessAssemblyFlowDocument', 'InnerKey', [controller.text]);
     if (list.isNotEmpty) {
       var obj = list[0];
       // 获取制令单号对应的数量
-      var pack = await bill_api.getNextReceiveProcessAssemblyFlowDetailQty(obj['id']);
+      var pack = await bill_api.getNextCompletionProcessAssemblyFlowDetailQty(obj['id']);
       if (pack['Status'] == 200) {
         var qty = jsonDecode(pack['Data']);
-        widget.model.setQty(qty);
+        widget.model.openedItem.qty = qty;
       } else {
         showSnackBar(context, pack['Message']);
         setState(() {
@@ -441,9 +434,6 @@ class _RowItemEditorPageState extends State<RowItemEditorPage> {
 
   /// 修改成功返回true
   Future<void> findAndSetEmployee(TextEditingController controller) async {
-    if (controller.text.isEmpty) {
-      return;
-    }
     var list = await general_entity_api.getDataUseField('Employee', 'CodeForScan', [controller.text]);
     if (list.isNotEmpty) {
       var obj = list[0];
@@ -456,110 +446,4 @@ class _RowItemEditorPageState extends State<RowItemEditorPage> {
       });
     }
   }
-}
-
-class RowItemEditorModel extends ChangeNotifier {
-  late RowItem openedItem;
-
-  List<RowItem>? Items;
-
-  int currentIndex = -1;
-
-  RowItem newRow() {
-    openedItem = RowItem(processAssemblyFlowDocumentid: 0, innerKey: '', employeeid: 0, employeeName: '', employeeCodeForScan: '', qty: 0);
-    notifyListeners();
-    return openedItem;
-  }
-
-  RowItem openRow(RowItem item) {
-    openedItem = item;
-    notifyListeners();
-    return openedItem;
-  }
-
-  RowItem setDailyPlanDetail(int id, String innerKey) {
-    openedItem.processAssemblyFlowDocumentid = id;
-    openedItem.innerKey = innerKey;
-    notifyListeners();
-    return openedItem;
-  }
-
-  RowItem clearDailyPlanDetail() {
-    openedItem.processAssemblyFlowDocumentid = 0;
-    openedItem.innerKey = '';
-    notifyListeners();
-    return openedItem;
-  }
-
-  RowItem setEmployee(int id, String name, String codeForScan) {
-    openedItem.employeeid = id;
-    openedItem.employeeName = name;
-    openedItem.employeeCodeForScan = codeForScan;
-    notifyListeners();
-    return openedItem;
-  }
-
-  RowItem clearEmployee() {
-    openedItem.employeeid = 0;
-    openedItem.employeeName = '';
-    openedItem.employeeCodeForScan = '';
-    notifyListeners();
-    return openedItem;
-  }
-
-  RowItem setQty(double qty) {
-    openedItem.qty = qty;
-    notifyListeners();
-    return openedItem;
-  }
-
-  RowItem clearQty() {
-    openedItem.qty = 0;
-    openedItem.maxLimitQty = 0;
-    notifyListeners();
-    return openedItem;
-  }
-
-  bool verify(BuildContext context) {
-    if (openedItem.innerKey.isEmpty) {
-      showSnackBar(context, '制令单号不能为空');
-      return false;
-    }
-    if (openedItem.employeeCodeForScan.isEmpty) {
-      showSnackBar(context, '操作员不能为空');
-      return false;
-    }
-    if (openedItem.qty == 0) {
-      showSnackBar(context, '数量不能为0');
-      return false;
-    }
-    return true;
-  }
-
-  void setCurrentIndex(int index) {
-    currentIndex = index;
-  }
-
-  void setExistItems(List<RowItem> items) {
-    Items = items;
-  }
-}
-
-class RowItem {
-  int processAssemblyFlowDocumentid;
-  String innerKey;
-  int employeeid;
-  String employeeName;
-  String employeeCodeForScan;
-  double qty;
-  double maxLimitQty = 0;
-
-  RowItem(
-      {required this.processAssemblyFlowDocumentid,
-      required this.innerKey,
-      required this.employeeid,
-      required this.employeeName,
-      required this.employeeCodeForScan,
-      required this.qty,
-      maxLimitQty});
 }

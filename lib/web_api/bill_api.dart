@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:dongjue_application/globals.dart';
 import 'package:dio/dio.dart';
 import 'package:dongjue_application/globals/user_info.dart';
-import 'package:dongjue_application/web_api/basic/db_changed_pack.dart';
 
 Dio dio = Dio();
 
@@ -61,14 +60,13 @@ Future<List> getDataPageWithFields(String tableName, int pageSize, int pageNumbe
     "tableName": tableName,
     "pageSize": pageSize,
     "pageNumber": pageNumber,
-    "fields": fields.join(","),//拼接fields
+    "fields": fields.join(","), //拼接fields
   });
   // print(response.data);
   Map refInfo = response.data as Map;
   List list = jsonDecode(refInfo["Data"]);
   return list;
 }
-
 
 // 通用读取信息
 Future<List> getDataUseIds(String tableName, List<int> ids) async {
@@ -209,7 +207,6 @@ Future<Map> receiveProcessAssemblyFlowDocument(int processAssemblyFlowDetailid) 
   return refInfo;
 }
 
-
 // 完工组装流程卡
 Future<Map> completeProcessAssemblyFlowDocument(int processAssemblyFlowDetailid) async {
   String url = GlobalData().web_api_config.WebApiUrl;
@@ -224,4 +221,96 @@ Future<Map> completeProcessAssemblyFlowDocument(int processAssemblyFlowDetailid)
   // print(response.data);
   Map refInfo = response.data as Map;
   return refInfo;
+}
+
+// 检查或创建组装流程卡
+Future<Map> checkOrCreateProcessAssemblyFlowDocument(String innerKey) async {
+  String url = GlobalData().web_api_config.WebApiUrl;
+  String dbName = GlobalData().db_config.DbName;
+  UserInfo userInfo = GlobalData().user_info;
+  Response response;
+  response = await dio.get("$url/billapi/checkorcreateprocessassemblyflow", queryParameters: {
+    "dbName": dbName,
+    "user": jsonEncode(userInfo),
+    "innerKey": innerKey,
+  });
+  // print(response.data);
+  Map refInfo = response.data as Map;
+  return refInfo;
+}
+
+// 获取组装流程卡明细的下一个要接收的工序
+Future<Map> getNextReceiveProcessAssemblyFlowDetailQty(int processAssemblyFlowBilld) async {
+  String url = GlobalData().web_api_config.WebApiUrl;
+  String dbName = GlobalData().db_config.DbName;
+  Response response;
+  response = await dio.get("$url/billapi/getprocessassemblyflownextreceiptdetailqty", queryParameters: {
+    "dbName": dbName,
+    "billid": processAssemblyFlowBilld,
+  });
+  // print(response.data);
+  Map refInfo = response.data as Map;
+  return refInfo;
+}
+
+// 获取组装流程卡明细的下一个要完工的工序
+Future<Map> getNextCompletionProcessAssemblyFlowDetailQty(int processAssemblyFlowBilld) async {
+  String url = GlobalData().web_api_config.WebApiUrl;
+  String dbName = GlobalData().db_config.DbName;
+  Response response;
+  response = await dio.get("$url/billapi/getprocessassemblyflownextcompletiondetailqty", queryParameters: {
+    "dbName": dbName,
+    "billid": processAssemblyFlowBilld,
+  });
+  // print(response.data);
+  Map refInfo = response.data as Map;
+  return refInfo;
+}
+
+// 批量接收组装流程卡
+Future<Map> batchReceiptProcessAssemblyFlowDocument(List<Map> billInfos) async {
+  String url = GlobalData().web_api_config.WebApiUrl;
+  String dbName = GlobalData().db_config.DbName;
+  UserInfo userInfo = GlobalData().user_info;
+  Response response;
+  response = await dio.post("$url/billapi/processassemblyflowbatchreceipt", queryParameters: {
+    "dbName": dbName,
+    "user": jsonEncode(userInfo),
+    "billInfos": jsonEncode(billInfos),
+  });
+  // print(response.data);
+  Map refInfo = response.data as Map;
+  return refInfo;
+}
+
+// 批量完工组装流程卡
+Future<Map> batchCompletionProcessAssemblyFlowDocument(List<Map> billInfos) async {
+  String url = GlobalData().web_api_config.WebApiUrl;
+  String dbName = GlobalData().db_config.DbName;
+  UserInfo userInfo = GlobalData().user_info;
+  Response response;
+  response = await dio.post("$url/billapi/processassemblyflowbatchcompletion", queryParameters: {
+    "dbName": dbName,
+    "user": jsonEncode(userInfo),
+    "billInfos": jsonEncode(billInfos),
+  });
+  // print(response.data);
+  Map refInfo = response.data as Map;
+  return refInfo;
+}
+
+class ReceiptInfo {
+  int Billid;
+  int Employeeid;
+  double Qty;
+
+  ReceiptInfo({required this.Billid, required this.Employeeid, required this.Qty});
+}
+
+class CompletionInfo {
+  int Billid;
+  int Employeeid;
+  double Qty;
+
+  CompletionInfo({required this.Billid, required this.Employeeid, required this.Qty});
 }

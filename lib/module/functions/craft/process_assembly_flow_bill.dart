@@ -848,7 +848,7 @@ class _ProcessAssemblyFlowBillState extends State<ProcessAssemblyFlowBill> {
                       child: BillDetail(
                           readOnly: !widget.canEdit(DocumentStatus.fromValue(billModel.data["Status"])),
                           detailColumnInfos: detailColumnInfos!,
-                          onCellDoubleTap: (billDetailModel, details) async {
+                          onCellTap: (billDetailModel, details) async {
                             var index = details.rowColumnIndex.rowIndex - 1;
                             //判断是否超出范围
                             if (index >= billDetailModel.detailsData.length) {
