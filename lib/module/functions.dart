@@ -227,7 +227,7 @@ class _FunctionsPageState extends State<FunctionsPage> {
       ],
     );
   }
-  
+
   getCrossAxisCount() {
     //通过判断屏幕宽度来决定是4列还是10列
     if (MediaQuery.of(context).size.width < 700) {

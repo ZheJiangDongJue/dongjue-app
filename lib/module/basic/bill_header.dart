@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dongjue_application/module/basic/bill_detail.dart';
 import 'package:dongjue_application/module/basic/page_base.dart';
 import 'package:dongjue_application/web_api/bill_api.dart' as bill_api;
+import 'package:dongjue_application/web_api/general_entity_api.dart' as general_entity_api;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -106,7 +107,8 @@ class BillModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setBillData(dynamic data) async {
+  Future<void> setBillData(dynamic data) async {
+    data ??= await general_entity_api.getEmptyData(tableName);
     attachData = {};
     if (data is Map) {
       this.data = data;
@@ -126,7 +128,7 @@ class BillModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void refresh(){
+  void refresh() {
     setBillData(data);
   }
 

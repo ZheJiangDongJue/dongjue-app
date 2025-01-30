@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:dongjue_application/module/login.dart' as m_login;
 import 'package:dongjue_application/module/functions.dart' as m_functions;
 import 'package:dongjue_application/setting.dart' as m_setting;
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 //这个是主函数,所有逻辑从这里开始
 void main() async {
@@ -29,6 +31,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale('zh'),
       ],
+      navigatorObservers: [FlutterSmartDialog.observer],
       locale: const Locale('zh'),
       title: '东爵内部App',
       theme: ThemeData(
@@ -50,6 +53,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      builder: FlutterSmartDialog.init(),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
       home: const m_login.LoginPage(),
       // home: const ControlTestPage(),

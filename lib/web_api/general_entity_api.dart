@@ -25,6 +25,19 @@ C#代码
   }
 */
 
+/// GetEmptyData
+/// 获取空数据
+Future<Map> getEmptyData(String tableName) async {
+  String url = GlobalData().web_api_config.WebApiUrl;
+  Response response;
+  response = await dio.get("$url/generalentityapi/getemptydata", queryParameters: {
+    "tableName": tableName,
+  });
+  Map map = jsonDecode(response.data) as Map;
+  return map;
+}
+
+
 Future<Map> generalDeleteRange(String tableName, List<int> ids) async {
   String url = GlobalData().web_api_config.WebApiUrl;
   String dbName = GlobalData().db_config.DbName;

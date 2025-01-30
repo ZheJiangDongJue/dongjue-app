@@ -101,7 +101,7 @@ class _BillDetailState extends State<BillDetail> {
               padding: const EdgeInsets.all(16.0),
               child: Visibility(
                 visible: !widget.readOnly,
-                child: IconButton(
+                child: IconButton.filledTonal(
                   onPressed: () {
                     value.detailDataSource.dataGridRows.add(value.detailRowBuilder({}));
                     value.detailsData.add({});

@@ -64,7 +64,90 @@ abstract class PageBase extends StatefulWidget {
   }
 }
 
-extension PageBaseExtension on PageBase {}
+typedef ScanCodeResultHandler = Future<bool> Function(String str);
+
+class ScanCodeResultHandlerInfo {
+  /// 命名
+  final String name;
+
+  /// 处理器
+  final ScanCodeResultHandler handler;
+
+  /// 固定长度
+  final int? fixedLength;
+
+  ScanCodeResultHandlerInfo({required this.name, required this.handler, this.fixedLength});
+}
+
+class PageBaseState<T extends PageBase> extends State<T> {
+  @override
+  void dispose() {
+    removeScanCodeResultHandlers();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    initScanCodeResultHandler();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+
+  void initScanCodeResultHandler() {
+    clearScanCodeResultHandler();
+  }
+}
+
+extension PageBaseStateExtension on PageBaseState {
+  static Map<PageBaseState, List<ScanCodeResultHandlerInfo>> scanCodeResultHandlerInfos = {};
+
+  /// 处理扫码,返回true表示已找到并处理,否则返回false
+  Future<bool> handleScanCode(String str) async {
+    if (!scanCodeResultHandlerInfos.containsKey(this)) {
+      return false;
+    }
+    for (var info in scanCodeResultHandlerInfos[this]!) {
+      if (info.fixedLength != null) {
+        if (str.length == info.fixedLength!) {
+          if (await info.handler(str)) {
+            return true;
+          }
+        }
+      } else {
+        if (await info.handler(str)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /// 添加扫码结果处理器
+  void addScanCodeResultHandler({required ScanCodeResultHandlerInfo info}) {
+    if (!scanCodeResultHandlerInfos.containsKey(this)) {
+      scanCodeResultHandlerInfos[this] = [info];
+    } else {
+      scanCodeResultHandlerInfos[this]!.add(info);
+    }
+  }
+
+  /// 移除扫码结果处理器
+  void removeScanCodeResultHandlers() {
+    scanCodeResultHandlerInfos.remove(this);
+  }
+
+  void clearScanCodeResultHandler() {
+    if (!scanCodeResultHandlerInfos.containsKey(this)) {
+      scanCodeResultHandlerInfos[this] = [];
+    } else {
+      scanCodeResultHandlerInfos[this]!.clear();
+    }
+  }
+}
 
 class ControlPositionInfo {
   final double x;

@@ -4,8 +4,14 @@ import 'dart:convert';
 import 'package:dongjue_application/globals.dart';
 import 'package:dio/dio.dart';
 import 'package:dongjue_application/globals/user_info.dart';
+import 'package:dongjue_application/web_api/basic/query.dart';
 
-Dio dio = Dio();
+Dio dio = newMethod();
+
+Dio newMethod() {
+  var dio = Dio();
+  return dio;
+}
 
 //测试参数
 Future<int> parameterTest(String tableName) async {
@@ -23,7 +29,21 @@ Future<int> parameterTest(String tableName) async {
   return refInfo;
 }
 
-//测试参数
+Future<List> GetDataEx(Query query) async {
+  String url = GlobalData().web_api_config.WebApiUrl;
+  String dbName = GlobalData().db_config.DbName;
+  Response response;
+  response = await dio.get("$url/billapi/getdataex", queryParameters: {
+    "dbName": dbName,
+    "query": Uri.encodeComponent(jsonEncode(query.toJson())),
+  });
+  // print(response.data);
+  Map refInfo = response.data as Map;
+  List list = jsonDecode(refInfo["Data"]);
+  return list;
+}
+
+//申请新Uid
 Future<int> getNewUid() async {
   String url = GlobalData().web_api_config.WebApiUrl;
   Response response;
@@ -187,6 +207,24 @@ Future<Map> generalBillApproval(String tableName, int billid, bool b) async {
     "b": b,
   });
   // print(response.data);
+  Map refInfo = response.data as Map;
+  return refInfo;
+}
+
+// 带工艺生成
+Future<Map> bringProcessGenerate(String tableName, dynamic bill, dynamic detail) async {
+  String url = GlobalData().web_api_config.WebApiUrl;
+  String dbName = GlobalData().db_config.DbName;
+  UserInfo userInfo = GlobalData().user_info;
+  Response response;
+  response = await dio.post("$url/billapi/bringprocessgenerate", queryParameters: {
+    "dbName": dbName,
+    "tableName": tableName,
+    "user": jsonEncode(userInfo),
+    "bill": jsonEncode(bill),
+    "detail": jsonEncode(detail),
+  });
+
   Map refInfo = response.data as Map;
   return refInfo;
 }
